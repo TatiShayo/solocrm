@@ -1,0 +1,1 @@
+# SoloCRM Learnings & Known Issues
