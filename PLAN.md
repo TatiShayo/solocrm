@@ -1,7 +1,7 @@
 ## SoloCRM Build Plan
 
 ## PHASE 1: STABILIZE
-- [ ] Build passes, auth works, protected routes
+- [x] Build passes, auth works, protected routes
 
 ## PHASE 2: CONTACTS
 - [ ] Landing page: "Every lead. Every deal. No BS pricing." hero, vs HubSpot comparison table, $10/mo CTA
