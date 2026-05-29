@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Trash2, Settings, GripVertical } from "lucide-react";
+import { Trash2, Settings, Kanban } from "lucide-react";
 import { deletePipeline } from "../actions";
 import type { Pipeline, Stage } from "@/lib/types";
 
@@ -33,8 +33,20 @@ export function PipelineList({ pipelines }: Props) {
       {pipelines.map((pipe) => (
         <div key={pipe.id} className="rounded-lg border p-4">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="font-medium">{pipe.name}</h3>
+            <Link
+              href={`/dashboard/pipeline/${pipe.id}/board`}
+              className="font-medium hover:text-primary"
+            >
+              {pipe.name}
+            </Link>
             <div className="flex items-center gap-1">
+              <Link
+                href={`/dashboard/pipeline/${pipe.id}/board`}
+                className="inline-flex items-center justify-center rounded-md h-8 w-8 hover:bg-muted"
+                title="View board"
+              >
+                <Kanban className="h-4 w-4" />
+              </Link>
               <Link
                 href={`/dashboard/pipeline/${pipe.id}`}
                 className="inline-flex items-center justify-center rounded-md h-8 w-8 hover:bg-muted"
