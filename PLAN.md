@@ -4,7 +4,7 @@
 - [x] Build passes, auth works, protected routes
 
 ## PHASE 2: CONTACTS
-- [ ] Landing page: "Every lead. Every deal. No BS pricing." hero, vs HubSpot comparison table, $10/mo CTA
+- [x] Landing page: "Every lead. Every deal. No BS pricing." hero, vs HubSpot comparison table, $10/mo CTA
 - [ ] Contact list: searchable, filterable by tag/status, sortable by name/date/value
 - [ ] Add/edit contact: name, email, phone, company, title, source (cold/referral/inbound), tags, notes
 - [ ] Contact detail: all info, activity timeline, linked deals, tasks, email history
