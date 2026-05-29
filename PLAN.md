@@ -15,10 +15,10 @@
 - [x] Create pipeline: user names stages (e.g. Lead → Qualified → Proposal → Won/Lost)
 - [x] Kanban board: drag-and-drop deals between stages (use dnd-kit)
 - [x] Deal card: contact name, value, probability, days in stage
-- [ ] Add/edit deal: title, contact, value, close date, probability, stage, notes
-- [ ] Deal detail: full info, activity timeline, notes
-- [ ] Won/Lost: mark deal outcome, reason for loss
-- [ ] Revenue forecast: sum of (deal value × probability) for all open deals
+- [x] Add/edit deal: title, contact, value, close date, probability, stage, notes
+- [x] Deal detail: full info, activity timeline, notes
+- [x] Won/Lost: mark deal outcome, reason for loss
+- [x] Revenue forecast: sum of (deal value × probability) for all open deals
 
 ## PHASE 4: TASKS & FOLLOW-UPS
 - [ ] Task list: all tasks across all contacts, sorted by due date
