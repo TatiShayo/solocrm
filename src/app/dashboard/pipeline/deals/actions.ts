@@ -1,0 +1,131 @@
+"use server";
+
+import { createClient } from "@/lib/supabase/server";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+
+interface DealFormData {
+  title: string;
+  contact_id: string;
+  value: number;
+  probability: number;
+  stage_id: string;
+  close_date?: string | null;
+  notes?: string | null;
+}
+
+export async function saveDeal(formData: DealFormData, dealId?: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) redirect("/auth/login");
+
+  const payload = {
+    user_id: user.id,
+    title: formData.title.trim(),
+    contact_id: formData.contact_id,
+    value: Number(formData.value) || 0,
+    probability: Math.min(100, Math.max(0, Number(formData.probability) || 0)),
+    stage_id: formData.stage_id,
+    close_date: formData.close_date || null,
+    notes: (formData.notes ?? "").trim() || null,
+  };
+
+  if (dealId) {
+    const { error } = await supabase
+      .from("deals")
+      .update(payload)
+      .eq("id", dealId);
+
+    if (error) return { error: error.message };
+  } else {
+    const { error } = await supabase
+      .from("deals")
+      .insert(payload);
+
+    if (error) return { error: error.message };
+  }
+
+  const { data: stage } = await supabase
+    .from("stages")
+    .select("pipeline_id")
+    .eq("id", payload.stage_id)
+    .single();
+
+  if (stage) {
+    revalidatePath(`/dashboard/pipeline/${stage.pipeline_id}/board`);
+  }
+  revalidatePath("/dashboard/pipeline");
+  redirect(
+    stage
+      ? `/dashboard/pipeline/${stage.pipeline_id}/board`
+      : "/dashboard/pipeline"
+  );
+}
+
+export async function markDealWon(dealId: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) redirect("/auth/login");
+
+  const { error } = await supabase
+    .from("deals")
+    .update({ status: "won", updated_at: new Date().toISOString() })
+    .eq("id", dealId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/dashboard/pipeline");
+  return { success: true };
+}
+
+export async function markDealLost(dealId: string, reason: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) redirect("/auth/login");
+
+  const { error } = await supabase
+    .from("deals")
+    .update({
+      status: "lost",
+      lost_reason: reason.trim() || null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", dealId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/dashboard/pipeline");
+  return { success: true };
+}
+
+export async function reopenDeal(dealId: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) redirect("/auth/login");
+
+  const { error } = await supabase
+    .from("deals")
+    .update({
+      status: "open",
+      lost_reason: null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", dealId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/dashboard/pipeline");
+  return { success: true };
+}

@@ -5,16 +5,16 @@
 
 ## PHASE 2: CONTACTS
 - [x] Landing page: "Every lead. Every deal. No BS pricing." hero, vs HubSpot comparison table, $10/mo CTA
-- [ ] Contact list: searchable, filterable by tag/status, sortable by name/date/value
-- [ ] Add/edit contact: name, email, phone, company, title, source (cold/referral/inbound), tags, notes
-- [ ] Contact detail: all info, activity timeline, linked deals, tasks, email history
-- [ ] Bulk import: CSV upload with column mapping → parse with papaparse → bulk insert
-- [ ] Duplicate detection: warn if email already exists before adding
+- [x] Contact list: searchable, filterable by source, sortable by name/date/company
+- [x] Add/edit contact: name, email, phone, company, title, source (cold/referral/inbound), tags, notes
+- [x] Contact detail: all info, activity timeline, linked deals, tasks, email history
+- [x] Bulk import: CSV upload with column mapping → parse with papaparse → bulk insert
+- [x] Duplicate detection: warn if email already exists before adding
 
 ## PHASE 3: PIPELINE
-- [ ] Create pipeline: user names stages (e.g. Lead → Qualified → Proposal → Won/Lost)
-- [ ] Kanban board: drag-and-drop deals between stages (use dnd-kit)
-- [ ] Deal card: contact name, value, probability, days in stage, next task
+- [x] Create pipeline: user names stages (e.g. Lead → Qualified → Proposal → Won/Lost)
+- [x] Kanban board: drag-and-drop deals between stages (use dnd-kit)
+- [x] Deal card: contact name, value, probability, days in stage
 - [ ] Add/edit deal: title, contact, value, close date, probability, stage, notes
 - [ ] Deal detail: full info, activity timeline, notes
 - [ ] Won/Lost: mark deal outcome, reason for loss
