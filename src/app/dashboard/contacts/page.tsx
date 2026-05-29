@@ -54,12 +54,20 @@ export default async function ContactsPage({ searchParams }: Props) {
             {contactsList.length} contact{contactsList.length !== 1 ? "s" : ""}
           </p>
         </div>
-        <Link
-          href="/dashboard/contacts/new"
-          className="inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground h-10 px-4 py-2 text-sm font-medium hover:bg-primary/90"
-        >
-          Add Contact
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/dashboard/contacts/import"
+            className="inline-flex items-center justify-center rounded-md border border-input bg-background h-10 px-4 py-2 text-sm font-medium hover:bg-muted"
+          >
+            Import
+          </Link>
+          <Link
+            href="/dashboard/contacts/new"
+            className="inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground h-10 px-4 py-2 text-sm font-medium hover:bg-primary/90"
+          >
+            Add Contact
+          </Link>
+        </div>
       </div>
 
       <ContactFilters />
