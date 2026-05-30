@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { LogOut, Users, Kanban, ListChecks } from "lucide-react";
+import { LogOut, Users, Kanban, ListChecks, Mail } from "lucide-react";
 
 export default async function DashboardLayout({
   children,
@@ -60,6 +60,13 @@ export default async function DashboardLayout({
                     {overdueCount}
                   </span>
                 )}
+              </Link>
+              <Link
+                href="/dashboard/sequences"
+                className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              >
+                <Mail className="h-4 w-4" />
+                Sequences
               </Link>
             </nav>
           </div>

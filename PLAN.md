@@ -28,8 +28,8 @@
 - [x] Reminders: email reminder 1 day before task due date via Resend
 
 ## PHASE 5: EMAIL SEQUENCES
-- [ ] Sequence builder: create multi-step email sequence (Step 1: Day 0, Step 2: Day 3, Step 3: Day 7)
-- [ ] Each step: subject, body (with {{firstName}}, {{company}} merge tags), delay days
+- [x] Sequence builder: create multi-step email sequence (Step 1: Day 0, Step 2: Day 3, Step 3: Day 7)
+- [x] Each step: subject, body (with {{firstName}}, {{company}} merge tags), delay days
 - [ ] Enroll contact: assign contact to sequence, system schedules emails automatically
 - [ ] Email sending: Resend sends scheduled emails, logs to contact timeline
 - [ ] Unsubscribe: every email has unsubscribe link, marks contact as opted-out

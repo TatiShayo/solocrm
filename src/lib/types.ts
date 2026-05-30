@@ -68,3 +68,47 @@ export interface Activity {
   description: string;
   created_at: string;
 }
+
+export interface Sequence {
+  id: string;
+  user_id: string;
+  name: string;
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SequenceStep {
+  id: string;
+  sequence_id: string;
+  sort_order: number;
+  delay_days: number;
+  subject: string;
+  body: string;
+  created_at: string;
+}
+
+export interface SequenceEnrollment {
+  id: string;
+  sequence_id: string;
+  contact_id: string;
+  user_id: string;
+  current_step: number;
+  active: boolean;
+  enrolled_at: string;
+  completed_at: string | null;
+}
+
+export interface ScheduledEmail {
+  id: string;
+  user_id: string;
+  contact_id: string;
+  sequence_id: string;
+  enrollment_id: string;
+  step_id: string;
+  subject: string;
+  body: string;
+  scheduled_at: string;
+  sent_at: string | null;
+  created_at: string;
+}
