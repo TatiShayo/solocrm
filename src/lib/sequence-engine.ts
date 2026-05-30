@@ -7,7 +7,7 @@ function hashContactId(contactId: string) {
   return crypto.createHash("sha256").update(`${contactId}:${salt}`).digest("hex");
 }
 
-function resolveMergeTags(
+export function resolveMergeTags(
   text: string,
   contact: { name: string; email: string | null; company: string | null; title: string | null },
   deal?: { title: string } | null

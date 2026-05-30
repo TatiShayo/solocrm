@@ -35,9 +35,9 @@
 - [x] Unsubscribe: every email has unsubscribe link, marks contact as opted-out
 
 ## PHASE 6: AI ASSISTANT
-- [ ] AI email writer: "Write a follow-up email for {{contactName}} who showed interest in {{product}}" → generates draft
-- [ ] AI deal summary: "Summarize the status of my {{dealTitle}} deal" → reads timeline, writes summary
-- [ ] AI next step suggester: given deal stage + days stuck → suggests best next action
+- [x] AI email writer: "Write a follow-up email for {{contactName}} who showed interest in {{product}}" → generates draft
+- [x] AI deal summary: "Summarize the status of my {{dealTitle}} deal" → reads timeline, writes summary
+- [x] AI next step suggester: given deal stage + days stuck → suggests best next action
 
 ## PHASE 7: TESTING & POLISH
 - [ ] Unit tests: pipeline calculations, sequence scheduling logic, merge tag replacement
