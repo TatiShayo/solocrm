@@ -45,3 +45,5 @@
 [2026-05-30] Task 2 done: Reminder system - daily cron to email tasks due tomorrow
 
 [2026-05-30] Task 3 done: Email sequence builder at /dashboard/sequences with step editor
+
+[2026-05-30] Task 5 done: Email sending engine - cron endpoint processes scheduled emails via Resend

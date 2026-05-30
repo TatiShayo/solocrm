@@ -31,7 +31,7 @@
 - [x] Sequence builder: create multi-step email sequence (Step 1: Day 0, Step 2: Day 3, Step 3: Day 7)
 - [x] Each step: subject, body (with {{firstName}}, {{company}} merge tags), delay days
 - [x] Enroll contact: assign contact to sequence, system schedules emails automatically
-- [ ] Email sending: Resend sends scheduled emails, logs to contact timeline
+- [x] Email sending: Resend sends scheduled emails, logs to contact timeline
 - [ ] Unsubscribe: every email has unsubscribe link, marks contact as opted-out
 
 ## PHASE 6: AI ASSISTANT
