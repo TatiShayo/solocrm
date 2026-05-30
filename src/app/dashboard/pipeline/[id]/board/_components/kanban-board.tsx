@@ -10,6 +10,7 @@ import {
   useSensors,
   type DragStartEvent,
   type DragEndEvent,
+  type DragOverEvent,
 } from "@dnd-kit/core";
 import { StageColumn } from "./stage-column";
 import { DealCard } from "./deal-card";
@@ -50,8 +51,7 @@ export function KanbanBoard({ stages, deals, stageNames }: Props) {
     if (deal) setActiveDeal(deal);
   };
 
-  const handleDragEnd = async (event: DragEndEvent) => {
-    setActiveDeal(null);
+  const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
     if (!over) return;
 
@@ -64,6 +64,26 @@ export function KanbanBoard({ stages, deals, stageNames }: Props) {
     setDealsList((prev) =>
       prev.map((d) => (d.id === dealId ? { ...d, stage_id: stageId } : d))
     );
+  };
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over || !activeDeal) {
+      setActiveDeal(null);
+      setDealsList(deals);
+      return;
+    }
+
+    const dealId = String(active.id);
+    const stageId = String(over.id);
+
+    setActiveDeal(null);
+
+    if (activeDeal.stage_id === stageId) {
+      setDealsList(deals);
+      return;
+    }
 
     await moveDeal(dealId, stageId);
   };
@@ -87,6 +107,7 @@ export function KanbanBoard({ stages, deals, stageNames }: Props) {
     <DndContext
       sensors={sensors}
       onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
       <div className="flex gap-4 overflow-x-auto pb-4 min-h-[60vh] items-start sm:flex-row flex-col">
