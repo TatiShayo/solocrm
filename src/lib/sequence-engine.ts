@@ -116,15 +116,20 @@ export async function processScheduledEmails() {
 
     const html = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto">${resolvedBody.replace(/\n/g, "<br>")}<hr style="margin-top:32px;border:none;border-top:1px solid #e5e7eb"><p style="font-size:12px;color:#9ca3af">If you no longer wish to receive emails, <a href="${unsubscribeUrl}" style="color:#6b7280">unsubscribe</a>.</p></div>`;
 
+    let resendMessageId: string | null = null;
     if (process.env.RESEND_API_KEY) {
-      await sendEmail(contact.email, resolvedSubject, html);
+      const result = await sendEmail(contact.email, resolvedSubject, html);
+      resendMessageId = result?.id || null;
     } else {
       console.warn("Resend not configured, skipping email to", contact.email);
     }
 
     await supabase
       .from("scheduled_emails")
-      .update({ sent_at: new Date().toISOString() })
+      .update({
+        sent_at: new Date().toISOString(),
+        resend_message_id: resendMessageId,
+      })
       .eq("id", email.id);
 
     await supabase.from("activity").insert({

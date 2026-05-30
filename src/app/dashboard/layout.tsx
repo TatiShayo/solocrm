@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { LogOut, Users, Kanban, ListChecks, Mail } from "lucide-react";
+import { LogOut, Users, Kanban, ListChecks, Mail, Settings } from "lucide-react";
 
 export default async function DashboardLayout({
   children,
@@ -68,6 +68,13 @@ export default async function DashboardLayout({
                 <Mail className="h-4 w-4" />
                 <span className="hidden lg:inline">Sequences</span>
               </Link>
+              <Link
+                href="/dashboard/settings"
+                className="inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              >
+                <Settings className="h-4 w-4" />
+                <span className="hidden lg:inline">Settings</span>
+              </Link>
             </nav>
             <nav className="flex md:hidden items-center gap-1">
               <Link
@@ -102,6 +109,13 @@ export default async function DashboardLayout({
                 aria-label="Sequences"
               >
                 <Mail className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/dashboard/settings"
+                className="inline-flex items-center justify-center rounded-md h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted"
+                aria-label="Settings"
+              >
+                <Settings className="h-4 w-4" />
               </Link>
             </nav>
           </div>

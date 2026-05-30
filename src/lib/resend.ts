@@ -9,10 +9,15 @@ export async function sendEmail(to: string, subject: string, html: string) {
     console.warn("Resend not configured, skipping email to", to);
     return null;
   }
-  return resend.emails.send({
+  const { data, error } = await resend.emails.send({
     from: "SoloCRM <crm@solo-crm.com>",
     to,
     subject,
     html,
   });
+  if (error) {
+    console.error("Resend send error:", error);
+    return null;
+  }
+  return data;
 }

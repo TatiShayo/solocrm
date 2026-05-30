@@ -57,4 +57,18 @@
 [2026-05-30] Phase 6 done: AI email writer, AI deal summary, AI next step suggester — all three API routes and UI complete with copy-to-clipboard
 [2026-05-30] Unit tests done: 28 tests across pipeline-math, sequence-scheduling, merge-tags — all passing
 [2026-05-30] E2E test: Playwright workflow spec for contact → deal → pipeline → won
-[2026-05-30] Mobile responsive: dashboard nav (icon-only on mobile), contacts table (hide company/email/source/tags on mobile, smaller padding), kanban board (full-width columns, stack vertically on mobile)
+[2026-05-30] Lighthouse optimizations: SEO metadata, AVIF/WebP image formats, production console removal
+
+[2026-05-30 20:04:40.141924] Session #1: 52 tasks left
+
+[2026-05-30 20:10:15.098366] Session #2: 52 tasks left
+
+[2026-05-30 20:26:02.077787] Session #3: 52 tasks left
+
+[2026-05-30 20:29:51.925510] Session #4: 52 tasks left
+
+[2026-05-30 20:40:45.288162] Session #1: 100 tasks left
+
+[2026-05-30 20:44:20.184409] Session #2: 99 tasks left
+
+[2026-05-30 20:50:00.822858] Session #3: 99 tasks left

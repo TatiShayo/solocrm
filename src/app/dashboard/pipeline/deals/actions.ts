@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { fireDealCreated, fireDealStageChanged, fireDealWon, fireDealLost } from "@/lib/webhooks";
 
 interface DealFormData {
   title: string;
@@ -41,11 +42,22 @@ export async function saveDeal(formData: DealFormData, dealId?: string) {
 
     if (error) return { error: error.message };
   } else {
-    const { error } = await supabase
+    const { data: newDeal, error } = await supabase
       .from("deals")
-      .insert(payload);
+      .insert(payload)
+      .select()
+      .single();
 
     if (error) return { error: error.message };
+
+    if (newDeal) {
+      await fireDealCreated(user.id, {
+        id: newDeal.id,
+        title: newDeal.title,
+        value: newDeal.value,
+        status: newDeal.status,
+      });
+    }
   }
 
   const { data: stage } = await supabase
@@ -94,6 +106,7 @@ export async function markDealWon(dealId: string) {
       type: "deal_change",
       description: `Deal "${deal.title}" won`,
     });
+    await fireDealWon(user.id, { id: dealId, title: deal.title });
   }
 
   revalidatePath("/dashboard/pipeline");
@@ -136,6 +149,7 @@ export async function markDealLost(dealId: string, reason: string) {
       type: "deal_change",
       description: desc,
     });
+    await fireDealLost(user.id, { id: dealId, title: deal.title, reason: reason.trim() || null });
   }
 
   revalidatePath("/dashboard/pipeline");
