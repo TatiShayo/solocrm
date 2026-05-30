@@ -30,15 +30,80 @@ export default async function SequencesPage({ searchParams }: Props) {
 
   const { data: enrollments } = await supabase
     .from("sequence_enrollments")
-    .select("sequence_id, active")
+    .select("sequence_id, active, completed_at")
     .eq("user_id", user.id);
 
-  const enrollmentMap = new Map<string, { total: number; active: number }>();
+  const enrollmentMap = new Map<string, { total: number; active: number; completed: number }>();
   for (const e of (enrollments || [])) {
-    const existing = enrollmentMap.get(e.sequence_id) || { total: 0, active: 0 };
+    const existing = enrollmentMap.get(e.sequence_id) || { total: 0, active: 0, completed: 0 };
     existing.total++;
     if (e.active) existing.active++;
+    if (e.completed_at) existing.completed++;
     enrollmentMap.set(e.sequence_id, existing);
+  }
+
+  // analytics: opens, clicks, unsubscribes per sequence
+  const seqIds = seqList.map((s) => s.id);
+  const analyticsMap = new Map<string, { sent: number; opens: number; clicks: number }>();
+
+  if (seqIds.length > 0) {
+    const { data: sentData } = await supabase
+      .from("scheduled_emails")
+      .select("sequence_id, id")
+      .in("sequence_id", seqIds)
+      .not("sent_at", "is", null);
+
+    const sentBySeq = new Map<string, { count: number; ids: string[] }>();
+    for (const s of (sentData || [])) {
+      const existing = sentBySeq.get(s.sequence_id) || { count: 0, ids: [] };
+      existing.count++;
+      existing.ids.push(s.id);
+      sentBySeq.set(s.sequence_id, existing);
+    }
+
+    const allSentIds = (sentData || []).map((s) => s.id);
+    const { data: events } = allSentIds.length > 0
+      ? await supabase
+          .from("email_events")
+          .select("scheduled_email_id, event_type")
+          .in("scheduled_email_id", allSentIds)
+      : { data: [] };
+
+    const openIds = new Set<string>();
+    const clickIds = new Set<string>();
+    for (const ev of (events || [])) {
+      if (ev.event_type === "opened") openIds.add(ev.scheduled_email_id);
+      if (ev.event_type === "clicked") clickIds.add(ev.scheduled_email_id);
+    }
+
+    for (const sent of (sentData || [])) {
+      const seqAnalytics = analyticsMap.get(sent.sequence_id) || { sent: 0, opens: 0, clicks: 0 };
+      seqAnalytics.sent++;
+      if (openIds.has(sent.id)) seqAnalytics.opens++;
+      if (clickIds.has(sent.id)) seqAnalytics.clicks++;
+      analyticsMap.set(sent.sequence_id, seqAnalytics);
+    }
+  }
+
+  // unsubscribed contacts per sequence
+  const { data: unsubData } = await supabase
+    .from("contacts")
+    .select("id, email")
+    .eq("is_opted_out", true);
+  const unsubContactIds = new Set((unsubData || []).map((c) => c.id));
+
+  let unsubCountBySeq = new Map<string, number>();
+  if (unsubContactIds.size > 0 && seqIds.length > 0) {
+    const { data: unsubEnrollments } = await supabase
+      .from("sequence_enrollments")
+      .select("sequence_id, contact_id")
+      .in("sequence_id", seqIds);
+
+    for (const e of (unsubEnrollments || [])) {
+      if (unsubContactIds.has(e.contact_id)) {
+        unsubCountBySeq.set(e.sequence_id, (unsubCountBySeq.get(e.sequence_id) || 0) + 1);
+      }
+    }
   }
 
   let editingSequence: Sequence | null = null;
@@ -136,7 +201,11 @@ export default async function SequencesPage({ searchParams }: Props) {
             </div>
           ) : (
             seqList.map((seq) => {
-              const counts = enrollmentMap.get(seq.id) || { total: 0, active: 0 };
+              const counts = enrollmentMap.get(seq.id) || { total: 0, active: 0, completed: 0 };
+              const analytics = analyticsMap.get(seq.id) || { sent: 0, opens: 0, clicks: 0 };
+              const unsubs = unsubCountBySeq.get(seq.id) || 0;
+              const openRate = analytics.sent > 0 ? Math.round((analytics.opens / analytics.sent) * 100) : 0;
+              const clickRate = analytics.sent > 0 ? Math.round((analytics.clicks / analytics.sent) * 100) : 0;
               return (
                 <div
                   key={seq.id}
@@ -163,13 +232,25 @@ export default async function SequencesPage({ searchParams }: Props) {
                       <DeleteSequenceButton sequenceId={seq.id} />
                     </div>
                   </div>
-                  <div className="flex gap-4 text-sm text-muted-foreground">
-                    <span>Steps: {counts.total || "—"}</span>
-                    <span>Enrolled: {counts.total || 0}</span>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                    <span>Enrolled: {counts.total}</span>
                     {counts.active > 0 && (
                       <span className="text-green-600">Active: {counts.active}</span>
                     )}
+                    {counts.completed > 0 && (
+                      <span className="text-blue-600">Completed: {counts.completed}</span>
+                    )}
+                    {unsubs > 0 && (
+                      <span className="text-orange-600">Unsubscribed: {unsubs}</span>
+                    )}
                   </div>
+                  {analytics.sent > 0 && (
+                    <div className="flex gap-4 mt-2 text-xs text-muted-foreground">
+                      <span>Sent: {analytics.sent}</span>
+                      <span>Opens: {openRate}%</span>
+                      <span>Clicks: {clickRate}%</span>
+                    </div>
+                  )}
                   <div className="flex items-center gap-2 mt-2">
                     <Link
                       href={`/dashboard/sequences?edit=${seq.id}`}

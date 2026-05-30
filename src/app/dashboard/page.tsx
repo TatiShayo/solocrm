@@ -1,4 +1,5 @@
 import { RevenueForecast } from "@/app/dashboard/pipeline/_components/revenue-forecast";
+import { SequenceTrigger } from "@/app/dashboard/_components/sequence-trigger";
 import { createClient } from "@/lib/supabase/server";
 import { Users, Briefcase, CheckCircle2 } from "lucide-react";
 
@@ -52,6 +53,8 @@ export default async function DashboardPage() {
       <div className="mt-6">
         <RevenueForecast />
       </div>
+
+      <SequenceTrigger />
     </div>
   );
 }
