@@ -1,5 +1,11 @@
 import { createClient } from "@supabase/supabase-js";
 import { sendEmail } from "./resend";
+import crypto from "crypto";
+
+function hashContactId(contactId: string) {
+  const salt = process.env.CRON_SECRET || "solocrm-unsubscribe";
+  return crypto.createHash("sha256").update(`${contactId}:${salt}`).digest("hex");
+}
 
 function resolveMergeTags(
   text: string,
@@ -44,7 +50,7 @@ export async function processScheduledEmails() {
   const contactIds = [...new Set(emails.map((e) => e.contact_id))];
   const { data: contacts } = await supabase
     .from("contacts")
-    .select("id, name, email, company, title, user_id")
+    .select("id, name, email, company, title, user_id, is_opted_out")
     .in("id", contactIds);
 
   const contactMap = new Map((contacts || []).map((c) => [c.id, c]));
@@ -91,13 +97,24 @@ export async function processScheduledEmails() {
   for (const email of emails) {
     const contact = contactMap.get(email.contact_id);
     if (!contact || !contact.email) continue;
+    if (contact.is_opted_out) {
+      await supabase
+        .from("scheduled_emails")
+        .update({ sent_at: new Date().toISOString() })
+        .eq("id", email.id);
+      continue;
+    }
 
     const deal = dealByContact.get(email.contact_id);
 
     const resolvedSubject = resolveMergeTags(email.subject, contact, deal);
     const resolvedBody = resolveMergeTags(email.body, contact, deal);
 
-    const html = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto">${resolvedBody.replace(/\n/g, "<br>")}</div>`;
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const token = hashContactId(contact.id);
+    const unsubscribeUrl = `${appUrl}/unsubscribe?token=${token}`;
+
+    const html = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto">${resolvedBody.replace(/\n/g, "<br>")}<hr style="margin-top:32px;border:none;border-top:1px solid #e5e7eb"><p style="font-size:12px;color:#9ca3af">If you no longer wish to receive emails, <a href="${unsubscribeUrl}" style="color:#6b7280">unsubscribe</a>.</p></div>`;
 
     if (process.env.RESEND_API_KEY) {
       await sendEmail(contact.email, resolvedSubject, html);
