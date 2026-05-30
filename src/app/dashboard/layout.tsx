@@ -18,6 +18,14 @@ export default async function DashboardLayout({
     redirect("/auth/login");
   }
 
+  const today = new Date(new Date().toDateString()).toISOString();
+  const { count: overdueCount } = await supabase
+    .from("tasks")
+    .select("*", { count: "exact", head: true })
+    .eq("user_id", user.id)
+    .eq("completed", false)
+    .lt("due_date", today);
+
   return (
     <div className="min-h-screen flex flex-col">
       <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -40,6 +48,18 @@ export default async function DashboardLayout({
               >
                 <Kanban className="h-4 w-4" />
                 Pipeline
+              </Link>
+              <Link
+                href="/dashboard/tasks"
+                className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              >
+                <ListChecks className="h-4 w-4" />
+                Tasks
+                {overdueCount != null && overdueCount > 0 && (
+                  <span className="inline-flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold min-w-[18px] h-[18px] px-1">
+                    {overdueCount}
+                  </span>
+                )}
               </Link>
             </nav>
           </div>

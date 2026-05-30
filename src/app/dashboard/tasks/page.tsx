@@ -78,7 +78,7 @@ export default async function TasksPage({ searchParams }: Props) {
               </div>
             ) : (
               tasksList.map((task) => (
-                <TaskItem key={task.id} task={task} />
+                <TaskItem key={task.id} task={task} contacts={contactsList} deals={dealsList} />
               ))
             )}
           </div>

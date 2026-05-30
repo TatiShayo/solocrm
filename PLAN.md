@@ -21,10 +21,10 @@
 - [x] Revenue forecast: sum of (deal value × probability) for all open deals
 
 ## PHASE 4: TASKS & FOLLOW-UPS
-- [ ] Task list: all tasks across all contacts, sorted by due date
-- [ ] Add task: title, contact, due date, type (call/email/meeting/follow-up)
-- [ ] Task completion: check off, logs to contact timeline
-- [ ] Overdue tasks: red badge on overdue, daily digest email
+- [x] Task list: all tasks across all contacts, sorted by due date
+- [x] Add task: title, contact, due date, type (call/email/meeting/follow-up)
+- [x] Task completion: check off, logs to contact timeline
+- [x] Overdue tasks: red badge on overdue, daily digest email
 - [ ] Reminders: email reminder 1 day before task due date via Resend
 
 ## PHASE 5: EMAIL SEQUENCES
