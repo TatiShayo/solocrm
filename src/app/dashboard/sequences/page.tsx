@@ -5,6 +5,8 @@ import type { Sequence, SequenceStep } from "@/lib/types";
 import { SequenceForm } from "./_components/sequence-form";
 import { StepBuilder } from "./_components/step-builder";
 import { DeleteSequenceButton } from "./_components/buttons";
+import { EnrollModal } from "./_components/enroll-modal";
+import { EnrolledContacts } from "./_components/enrolled-contacts";
 
 interface Props {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -41,6 +43,17 @@ export default async function SequencesPage({ searchParams }: Props) {
 
   let editingSequence: Sequence | null = null;
   let steps: SequenceStep[] = [];
+  let enrolledContactIds = new Set<string>();
+  let enrolledContacts: {
+    enrollment_id: string;
+    contact_id: string;
+    contact_name: string;
+    contact_email: string | null;
+    current_step: number;
+    active: boolean;
+    last_email_sent: string | null;
+    next_email_scheduled: string | null;
+  }[] = [];
 
   if (editId) {
     const { data: seq } = await supabase
@@ -58,6 +71,46 @@ export default async function SequencesPage({ searchParams }: Props) {
         .eq("sequence_id", editId)
         .order("sort_order", { ascending: true });
       steps = (stepData || []) as SequenceStep[];
+
+      const { data: enrData } = await supabase
+        .from("sequence_enrollments")
+        .select(`
+          id,
+          contact_id,
+          current_step,
+          active,
+          contacts!inner(name, email)
+        `)
+        .eq("sequence_id", editId)
+        .eq("user_id", user.id);
+
+      if (enrData) {
+        for (const enr of enrData) {
+          enrolledContactIds.add(enr.contact_id);
+
+          const { data: scheduled } = await supabase
+            .from("scheduled_emails")
+            .select("scheduled_at, sent_at")
+            .eq("enrollment_id", enr.id)
+            .order("scheduled_at", { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+          const contactData = enr.contacts as unknown as { name: string; email: string | null };
+          enrolledContacts.push({
+            enrollment_id: enr.id,
+            contact_id: enr.contact_id,
+            contact_name: contactData.name,
+            contact_email: contactData.email,
+            current_step: enr.current_step,
+            active: enr.active,
+            last_email_sent: scheduled?.sent_at || null,
+            next_email_scheduled: (scheduled && !scheduled.sent_at)
+              ? scheduled.scheduled_at
+              : null,
+          });
+        }
+      }
     }
   }
 
@@ -134,7 +187,20 @@ export default async function SequencesPage({ searchParams }: Props) {
         <div>
           <SequenceForm editSequence={editingSequence} />
           {editingSequence && (
-            <StepBuilder sequenceId={editingSequence.id} steps={steps} />
+            <>
+              <div className="mt-4">
+                <EnrollModal
+                  sequenceId={editingSequence.id}
+                  sequenceName={editingSequence.name}
+                  enrolledContactIds={enrolledContactIds}
+                />
+              </div>
+              <StepBuilder sequenceId={editingSequence.id} steps={steps} />
+              <EnrolledContacts
+                sequenceId={editingSequence.id}
+                contacts={enrolledContacts}
+              />
+            </>
           )}
         </div>
       </div>

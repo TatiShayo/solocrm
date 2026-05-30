@@ -38,6 +38,10 @@
 
 [2026-05-30 11:58:31.270893] Session #1: 21 tasks left
 
+[2026-05-30] Task 4 done: Contact enrollment in email sequences with merge tag resolution
+
 [2026-05-30] Task 1 done: Task completion & logging, overdue badge, overdue digest endpoint
 
 [2026-05-30] Task 2 done: Reminder system - daily cron to email tasks due tomorrow
+
+[2026-05-30] Task 3 done: Email sequence builder at /dashboard/sequences with step editor
