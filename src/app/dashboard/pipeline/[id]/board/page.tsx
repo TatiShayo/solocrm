@@ -51,25 +51,25 @@ export default async function PipelineBoardPage({ params }: Props) {
   }));
 
   return (
-    <div className="p-8">
-      <div className="flex items-center gap-3 mb-2">
+    <div className="p-4 md:p-8">
+      <div className="flex flex-wrap items-center gap-3 mb-2">
         <Link
           href="/dashboard/pipeline"
-          className="inline-flex items-center justify-center rounded-md border border-input bg-background h-8 w-8 hover:bg-muted"
+          className="inline-flex items-center justify-center rounded-md border border-input bg-background h-8 w-8 hover:bg-muted flex-shrink-0"
         >
           <ArrowLeft className="h-4 w-4" />
         </Link>
-        <div className="flex-1">
-          <h1 className="text-3xl font-bold tracking-tight">
+        <div className="flex-1 min-w-0">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight truncate">
             {pipeline.name}
           </h1>
         </div>
         <Link
           href={`/dashboard/pipeline/deals/new?pipeline=${pipeline.id}`}
-          className="inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground h-10 px-4 py-2 text-sm font-medium hover:bg-primary/90"
+          className="inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground h-10 px-3 md:px-4 py-2 text-sm font-medium hover:bg-primary/90"
         >
-          <Plus className="h-4 w-4 mr-2" />
-          Add Deal
+          <Plus className="h-4 w-4 md:mr-2" />
+          <span className="hidden sm:inline">Add Deal</span>
         </Link>
       </div>
 

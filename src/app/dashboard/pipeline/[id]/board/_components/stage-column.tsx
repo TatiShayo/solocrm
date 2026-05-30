@@ -28,7 +28,7 @@ export function StageColumn({ stageId, stageName, deals, isLast }: StageColumnPr
   return (
     <div
       ref={setNodeRef}
-      className={`flex-shrink-0 w-72 rounded-lg border bg-muted/30 flex flex-col max-h-full ${
+      className={`flex-shrink-0 w-full sm:w-72 rounded-lg border bg-muted/30 flex flex-col max-h-full ${
         isOver ? "border-primary/50 bg-primary/5" : ""
       } ${isLast ? "border-destructive/20" : ""}`}
     >

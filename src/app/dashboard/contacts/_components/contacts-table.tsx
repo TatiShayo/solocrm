@@ -58,7 +58,9 @@ export function ContactsTable({
                 href={buildSortHref(baseParams, "created_at")}
                 className="inline-flex items-center gap-1 hover:text-primary"
               >
-                Date Added{sortArrow(sort, order, "created_at")}
+                <span className="hidden sm:inline">Date Added</span>
+                <span className="sm:hidden">Date</span>
+                {sortArrow(sort, order, "created_at")}
               </Link>
             </th>
             <th className="h-10 px-4 text-left align-middle font-medium text-foreground">
@@ -66,16 +68,16 @@ export function ContactsTable({
                 href={buildSortHref(baseParams, "company")}
                 className="inline-flex items-center gap-1 hover:text-primary"
               >
-                Company{sortArrow(sort, order, "company")}
+                <span className="hidden sm:inline">Company</span>{sortArrow(sort, order, "company")}
               </Link>
             </th>
-            <th className="h-10 px-4 text-left align-middle font-medium text-foreground">
+            <th className="h-10 px-4 text-left align-middle font-medium text-foreground hidden sm:table-cell">
               Email
             </th>
-            <th className="h-10 px-4 text-left align-middle font-medium text-foreground">
+            <th className="h-10 px-4 text-left align-middle font-medium text-foreground hidden sm:table-cell">
               Source
             </th>
-            <th className="h-10 px-4 text-left align-middle font-medium text-foreground">
+            <th className="h-10 px-4 text-left align-middle font-medium text-foreground hidden sm:table-cell">
               Tags
             </th>
           </tr>
@@ -98,7 +100,7 @@ export function ContactsTable({
                 key={contact.id}
                 className="border-b transition-colors hover:bg-muted/50"
               >
-                <td className="p-4 align-middle">
+                <td className="p-3 md:p-4 align-middle">
                   <Link
                     href={`/dashboard/contacts/${contact.id}`}
                     className="font-medium hover:text-primary"
@@ -106,16 +108,16 @@ export function ContactsTable({
                     {contact.name}
                   </Link>
                 </td>
-                <td className="p-4 align-middle text-muted-foreground">
+                <td className="p-3 md:p-4 align-middle text-muted-foreground whitespace-nowrap text-xs sm:text-sm">
                   {new Date(contact.created_at).toLocaleDateString()}
                 </td>
-                <td className="p-4 align-middle text-muted-foreground">
+                <td className="p-4 align-middle text-muted-foreground hidden sm:table-cell">
                   {contact.company || "—"}
                 </td>
-                <td className="p-4 align-middle">
+                <td className="p-4 align-middle hidden sm:table-cell">
                   {contact.email || "—"}
                 </td>
-                <td className="p-4 align-middle">
+                <td className="p-4 align-middle hidden sm:table-cell">
                   {contact.source ? (
                     <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold">
                       {contact.source}
@@ -124,7 +126,7 @@ export function ContactsTable({
                     "—"
                   )}
                 </td>
-                <td className="p-4 align-middle">
+                <td className="p-4 align-middle hidden sm:table-cell">
                   <div className="flex gap-1 flex-wrap">
                     {contact.tags?.map((tag) => (
                       <span

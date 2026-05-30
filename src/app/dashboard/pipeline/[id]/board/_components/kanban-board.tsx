@@ -85,7 +85,7 @@ export function KanbanBoard({ stages, deals, stageNames }: Props) {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex gap-4 overflow-x-auto pb-4 min-h-[60vh] items-start">
+      <div className="flex gap-4 overflow-x-auto pb-4 min-h-[60vh] items-start sm:flex-row flex-col">
         {stageColumns}
       </div>
 

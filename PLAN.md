@@ -41,7 +41,7 @@
 
 ## PHASE 7: TESTING & POLISH
 - [x] Unit tests: pipeline calculations, sequence scheduling logic, merge tag replacement
-- [ ] E2e: add contact → create deal → move through pipeline → mark won
+- [x] E2e: add contact → create deal → move through pipeline → mark won
 - [ ] Mobile: contact list and pipeline kanban must work at 375px
 - [ ] Lighthouse ≥85
 

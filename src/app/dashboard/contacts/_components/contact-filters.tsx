@@ -53,8 +53,8 @@ export function ContactFilters() {
   };
 
   return (
-    <div className="flex items-center gap-3 mb-4">
-      <div className="relative flex-1 max-w-sm">
+    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mb-4">
+      <div className="relative flex-1 max-w-full sm:max-w-sm">
         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
         <input
           type="text"
