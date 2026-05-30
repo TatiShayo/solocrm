@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Bot, Mail, FileText, Lightbulb, Loader2, Copy, Check } from "lucide-react";
+import { formatCurrency } from "@/lib/format";
 
 type Contact = { id: string; name: string; email: string | null; company: string | null };
 type Deal = { id: string; title: string; value: number; status: string };
@@ -222,7 +223,7 @@ function DealSummaryInner() {
           <option value="">Choose a deal...</option>
           {deals.map((d) => (
             <option key={d.id} value={d.id}>
-              {d.title} — ${d.value.toLocaleString()} ({d.status})
+              {d.title} — {formatCurrency(d.value)} ({d.status})
             </option>
           ))}
         </select>
@@ -325,7 +326,7 @@ function NextStep() {
           <option value="">Choose a deal...</option>
           {deals.map((d) => (
             <option key={d.id} value={d.id}>
-              {d.title} — ${d.value.toLocaleString()}
+              {d.title} — {formatCurrency(d.value)}
             </option>
           ))}
         </select>

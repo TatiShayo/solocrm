@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowLeft, Pencil, DollarSign, Percent, Calendar, StickyNote, Trophy, XCircle, Undo2 } from "lucide-react";
 import type { Task, Activity } from "@/lib/types";
 import { markDealWon, markDealLost, reopenDeal } from "../actions";
+import { formatCurrency } from "@/lib/format";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -96,7 +97,7 @@ export default async function DealDetailPage({ params }: Props) {
 
             <div className="flex items-center gap-2 text-sm">
               <DollarSign className="h-4 w-4 text-muted-foreground" />
-              <span className="font-medium">${deal.value.toLocaleString()}</span>
+              <span className="font-medium">{formatCurrency(deal.value)}</span>
             </div>
 
             <div className="flex items-center gap-2 text-sm">

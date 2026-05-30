@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowLeft, Mail, Phone, Building, Briefcase, Tag, StickyNote, Pencil } from "lucide-react";
 import type { Deal, Task, Activity } from "@/lib/types";
 import { MeetingNotesCard } from "../_components/meeting-notes-card";
+import { formatCurrency } from "@/lib/format";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -183,7 +184,7 @@ export default async function ContactDetailPage({ params }: Props) {
                       <div>
                         <p className="text-sm font-medium">{deal.title}</p>
                         <p className="text-xs text-muted-foreground">
-                          ${deal.value.toLocaleString()} · {deal.probability}% ·
+                          {formatCurrency(deal.value)} · {deal.probability}% ·
                           {deal.status === "won"
                             ? " Won"
                             : deal.status === "lost"

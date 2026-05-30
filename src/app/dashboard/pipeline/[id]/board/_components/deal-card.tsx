@@ -3,6 +3,7 @@
 import { useDraggable } from "@dnd-kit/core";
 import Link from "next/link";
 import { Clock, DollarSign } from "lucide-react";
+import { formatCurrency } from "@/lib/format";
 
 interface DealWithContact {
   id: string;
@@ -57,7 +58,7 @@ export function DealCard({ deal }: Props) {
       <div className="flex items-center justify-between mt-2">
         <div className="flex items-center gap-1 text-xs text-muted-foreground">
           <DollarSign className="h-3 w-3" />
-          <span>${deal.value.toLocaleString()}</span>
+          <span>{formatCurrency(deal.value)}</span>
         </div>
         <span className="text-xs font-medium">{deal.probability}%</span>
       </div>

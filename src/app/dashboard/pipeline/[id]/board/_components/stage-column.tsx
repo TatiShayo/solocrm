@@ -2,6 +2,7 @@
 
 import { useDroppable } from "@dnd-kit/core";
 import { DealCard } from "./deal-card";
+import { formatCurrency } from "@/lib/format";
 
 interface DealWithContact {
   id: string;
@@ -40,7 +41,7 @@ export function StageColumn({ stageId, stageName, deals, isLast }: StageColumnPr
           </span>
         </div>
         <p className="text-xs text-muted-foreground mt-0.5">
-          ${totalValue.toLocaleString()}
+          {formatCurrency(totalValue)}
         </p>
       </div>
       <div className="p-2 space-y-2 overflow-y-auto flex-1">

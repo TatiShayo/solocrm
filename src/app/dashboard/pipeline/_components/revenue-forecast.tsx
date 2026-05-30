@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { DollarSign } from "lucide-react";
+import { formatCurrency } from "@/lib/format";
 
 interface ForecastData {
   total: number;
@@ -52,7 +53,7 @@ export async function RevenueForecast() {
       <div className="grid grid-cols-2 gap-4">
         <div>
           <p className="text-2xl font-bold">
-            ${Math.round(weightedPipeline).toLocaleString()}
+            {formatCurrency(Math.round(weightedPipeline))}
           </p>
           <p className="text-xs text-muted-foreground mt-0.5">
             Weighted forecast ({openDeals.length} open deal
@@ -61,7 +62,7 @@ export async function RevenueForecast() {
         </div>
         <div>
           <p className="text-2xl font-bold text-muted-foreground">
-            ${totalPipeline.toLocaleString()}
+            {formatCurrency(totalPipeline)}
           </p>
           <p className="text-xs text-muted-foreground mt-0.5">
             Total pipeline ({pctOfTotal}% weighted avg)
@@ -73,7 +74,7 @@ export async function RevenueForecast() {
         <div className="pt-2 border-t">
           <p className="text-sm">
             <span className="font-medium text-green-600 dark:text-green-400">
-              ${wonTotal.toLocaleString()}
+              {formatCurrency(wonTotal)}
             </span>
             <span className="text-muted-foreground">
               {" "}
