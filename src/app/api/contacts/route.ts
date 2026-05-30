@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
+import { fireContactCreated } from "@/lib/webhooks";
 
 async function authenticateRequest(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
@@ -111,6 +112,15 @@ export async function POST(request: NextRequest) {
     contact_id: contact.id,
     type: "contact_created",
     description: `Contact created via Chrome extension`,
+  });
+
+  fireContactCreated(auth.userId, {
+    id: contact.id,
+    name: contact.name,
+    email: contact.email,
+    company: contact.company,
+  }).catch((err) => {
+    console.error("Webhook fireContactCreated failed:", err);
   });
 
   return NextResponse.json({ contact }, { status: 201 });

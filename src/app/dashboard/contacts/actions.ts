@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { fireContactCreated } from "@/lib/webhooks";
 
 interface ContactFormData {
   name: string;
@@ -102,6 +103,13 @@ export async function saveContact(formData: ContactFormData, contactId?: string)
         contact_id: inserted.id,
         type: "contact_created",
         description: `Contact "${payload.name}" created`,
+      });
+
+      await fireContactCreated(user.id, {
+        id: inserted.id,
+        name: payload.name,
+        email: payload.email,
+        company: payload.company,
       });
     }
   }

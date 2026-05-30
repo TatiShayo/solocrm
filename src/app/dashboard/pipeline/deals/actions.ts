@@ -35,12 +35,41 @@ export async function saveDeal(formData: DealFormData, dealId?: string) {
   };
 
   if (dealId) {
+    const { data: oldDeal } = await supabase
+      .from("deals")
+      .select("stage_id, title, value, status")
+      .eq("id", dealId)
+      .single();
+
     const { error } = await supabase
       .from("deals")
       .update(payload)
       .eq("id", dealId);
 
     if (error) return { error: error.message };
+
+    if (oldDeal && oldDeal.stage_id !== payload.stage_id) {
+      const { data: oldStage } = await supabase
+        .from("stages")
+        .select("name")
+        .eq("id", oldDeal.stage_id)
+        .single();
+
+      const { data: newStage } = await supabase
+        .from("stages")
+        .select("name")
+        .eq("id", payload.stage_id)
+        .single();
+
+      if (oldStage && newStage) {
+        await fireDealStageChanged(
+          user.id,
+          { id: dealId, title: oldDeal.title, value: oldDeal.value, status: oldDeal.status },
+          oldStage.name,
+          newStage.name
+        );
+      }
+    }
   } else {
     const { data: newDeal, error } = await supabase
       .from("deals")

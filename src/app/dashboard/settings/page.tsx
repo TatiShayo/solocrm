@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Copy, Trash2, Key, Plus } from "lucide-react";
+import { Copy, Trash2, Key, Plus, Webhook } from "lucide-react";
 
 interface ApiKey {
   id: string;
@@ -15,11 +15,32 @@ interface ApiKey {
   created_at: string;
 }
 
+interface WebhookDef {
+  id: string;
+  url: string;
+  events: string[];
+  created_at: string;
+}
+
+const WEBHOOK_EVENTS = [
+  { value: "deal.created", label: "Deal Created" },
+  { value: "deal.stage_changed", label: "Deal Stage Changed" },
+  { value: "deal.won", label: "Deal Won" },
+  { value: "deal.lost", label: "Deal Lost" },
+  { value: "contact.created", label: "Contact Created" },
+];
+
 export default function SettingsPage() {
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
   const [loading, setLoading] = useState(true);
   const [newKeyName, setNewKeyName] = useState("");
   const [creating, setCreating] = useState(false);
+
+  const [webhooks, setWebhooks] = useState<WebhookDef[]>([]);
+  const [webhooksLoading, setWebhooksLoading] = useState(true);
+  const [webhookUrl, setWebhookUrl] = useState("");
+  const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
+  const [webhookSaving, setWebhookSaving] = useState(false);
 
   const fetchKeys = useCallback(async () => {
     const res = await fetch("/api/settings/api-keys");
@@ -33,6 +54,56 @@ export default function SettingsPage() {
   useEffect(() => {
     fetchKeys();
   }, [fetchKeys]);
+
+  const fetchWebhooks = useCallback(async () => {
+    const res = await fetch("/api/webhooks");
+    if (res.ok) {
+      const data = await res.json();
+      setWebhooks(data.webhooks);
+    }
+    setWebhooksLoading(false);
+  }, []);
+
+  useEffect(() => {
+    fetchWebhooks();
+  }, [fetchWebhooks]);
+
+  function toggleEvent(event: string) {
+    setSelectedEvents((prev) =>
+      prev.includes(event) ? prev.filter((e) => e !== event) : [...prev, event]
+    );
+  }
+
+  async function createWebhook() {
+    if (!webhookUrl.trim() || selectedEvents.length === 0) return;
+    setWebhookSaving(true);
+    const res = await fetch("/api/webhooks", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url: webhookUrl.trim(), events: selectedEvents }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      setWebhooks([data.webhook, ...webhooks]);
+      setWebhookUrl("");
+      setSelectedEvents([]);
+      toast.success("Webhook created");
+    } else {
+      const err = await res.json();
+      toast.error(err.error || "Failed to create webhook");
+    }
+    setWebhookSaving(false);
+  }
+
+  async function deleteWebhook(id: string) {
+    const res = await fetch(`/api/webhooks?id=${id}`, { method: "DELETE" });
+    if (res.ok) {
+      setWebhooks(webhooks.filter((w) => w.id !== id));
+      toast.success("Webhook deleted");
+    } else {
+      toast.error("Failed to delete webhook");
+    }
+  }
 
   async function createKey() {
     if (!newKeyName.trim()) return;
@@ -151,6 +222,86 @@ export default function SettingsPage() {
             <li>Open the extension, paste your API key, and enter your SoloCRM domain</li>
             <li>Browse LinkedIn — click the extension button on any profile to capture it</li>
           </ol>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Webhook className="h-5 w-5" />
+            Webhooks
+          </CardTitle>
+          <CardDescription>
+            Send events to Zapier or any HTTP endpoint when deals change or contacts are created.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-3">
+            <Input
+              placeholder="https://hooks.zapier.com/hooks/catch/..."
+              value={webhookUrl}
+              onChange={(e) => setWebhookUrl(e.target.value)}
+            />
+            <div>
+              <p className="text-xs font-medium mb-2">Events to send:</p>
+              <div className="flex flex-wrap gap-2">
+                {WEBHOOK_EVENTS.map((ev) => (
+                  <button
+                    key={ev.value}
+                    type="button"
+                    onClick={() => toggleEvent(ev.value)}
+                    className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors ${
+                      selectedEvents.includes(ev.value)
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "hover:bg-muted"
+                    }`}
+                  >
+                    {ev.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <Button
+              onClick={createWebhook}
+              disabled={webhookSaving || !webhookUrl.trim() || selectedEvents.length === 0}
+              size="sm"
+            >
+              <Plus className="h-4 w-4 mr-1" />
+              Add Webhook
+            </Button>
+          </div>
+
+          {webhooksLoading ? (
+            <p className="text-sm text-muted-foreground">Loading...</p>
+          ) : webhooks.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No webhooks configured yet.</p>
+          ) : (
+            <div className="space-y-2">
+              {webhooks.map((wh) => (
+                <div
+                  key={wh.id}
+                  className="flex items-center justify-between p-3 rounded-lg border bg-muted/30"
+                >
+                  <div className="min-w-0">
+                    <p className="text-sm truncate">{wh.url}</p>
+                    <div className="flex gap-1 mt-1 flex-wrap">
+                      {wh.events.map((e) => (
+                        <span
+                          key={e}
+                          className="inline-flex items-center rounded-full bg-secondary px-2 py-0.5 text-xs"
+                        >
+                          {WEBHOOK_EVENTS.find((ev) => ev.value === e)?.label || e}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <Button variant="ghost" size="icon" onClick={() => deleteWebhook(wh.id)}>
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
