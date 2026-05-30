@@ -25,7 +25,7 @@
 - [x] Add task: title, contact, due date, type (call/email/meeting/follow-up)
 - [x] Task completion: check off, logs to contact timeline
 - [x] Overdue tasks: red badge on overdue, daily digest email
-- [ ] Reminders: email reminder 1 day before task due date via Resend
+- [x] Reminders: email reminder 1 day before task due date via Resend
 
 ## PHASE 5: EMAIL SEQUENCES
 - [ ] Sequence builder: create multi-step email sequence (Step 1: Day 0, Step 2: Day 3, Step 3: Day 7)
