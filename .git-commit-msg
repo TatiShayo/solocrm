@@ -1,3 +1,3 @@
-done: unit tests - pipeline math, sequence scheduling, merge tag replacement (28 tests)
+done: E2E test - contact → deal → pipeline → won workflow spec
 
 Co-authored-by: CommandCodeBot <noreply@commandcode.ai>
