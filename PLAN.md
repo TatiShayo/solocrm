@@ -68,7 +68,7 @@
 - [x] "Won" animation: when deal dragged to Won column → confetti burst (CSS keyframes, no library)
 - [x] "Lost" animation: when deal dragged to Lost → card fades to gray with strikethrough
 - [x] Deal age indicator: if deal stuck in same stage >7 days → amber dot. >14 days → red dot
-- [ ] Revenue forecast bar: above kanban, shows "(sum of deal values × probability)" rolling total
+- [x] Revenue forecast bar: above kanban, shows "(sum of deal values × probability)" rolling total
 - [x] Quick edit: click deal value directly on card to edit inline without opening modal
 - [ ] Keyboard shortcut: press N on pipeline page → opens new deal modal
 

@@ -45,6 +45,25 @@ export function KanbanBoard({ stages, deals, stageNames, pipelineId }: Props) {
   const [lostAnim, setLostAnim] = useState(false);
   const [lostTitle, setLostTitle] = useState("");
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        e.key === "n" &&
+        !e.ctrlKey &&
+        !e.metaKey &&
+        !e.altKey &&
+        document.activeElement?.tagName !== "INPUT" &&
+        document.activeElement?.tagName !== "TEXTAREA" &&
+        (document.activeElement as HTMLElement)?.contentEditable !== "true"
+      ) {
+        e.preventDefault();
+        router.push(`/dashboard/pipeline/deals/new?pipeline=${pipelineId}`);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [pipelineId, router]);
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 8 },

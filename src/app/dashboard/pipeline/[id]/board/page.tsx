@@ -66,10 +66,13 @@ export default async function PipelineBoardPage({ params }: Props) {
         </div>
         <Link
           href={`/dashboard/pipeline/deals/new?pipeline=${pipeline.id}`}
-          className="inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground h-10 px-3 md:px-4 py-2 text-sm font-medium hover:bg-primary/90"
+          className="inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground h-10 px-3 md:px-4 py-2 text-sm font-medium hover:bg-primary/90 gap-2"
         >
-          <Plus className="h-4 w-4 md:mr-2" />
+          <Plus className="h-4 w-4" />
           <span className="hidden sm:inline">Add Deal</span>
+          <kbd className="hidden sm:inline-flex items-center justify-center rounded border border-primary-foreground/30 bg-primary-foreground/10 px-1.5 py-0.5 text-[10px] font-mono leading-none">
+            N
+          </kbd>
         </Link>
       </div>
 
