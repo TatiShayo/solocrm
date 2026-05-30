@@ -53,14 +53,14 @@
     53|
 
 ## PHASE 7: PRODUCTION HARDENING
-- [ ] npm run build: zero errors, zero warnings
-- [ ] npx tsc --noEmit: zero errors
-- [ ] Add loading.tsx and error.tsx to all dashboard routes
-- [ ] Pipeline kanban: test drag-and-drop at 375px (touch events) — must work on mobile
-- [ ] All deal values: use Intl.NumberFormat(locale, {style:'currency', currency}) — never raw numbers
-- [ ] Contact table: virtual scrolling must handle 1000+ contacts without lag (@tanstack/react-virtual)
+- [x] npm run build: zero errors, zero warnings
+- [x] npx tsc --noEmit: zero errors
+- [x] Add loading.tsx and error.tsx to all dashboard routes
+- [x] Pipeline kanban: test drag-and-drop at 375px (touch events) — must work on mobile
+- [x] All deal values: use Intl.NumberFormat(locale, {style:'currency', currency}) — never raw numbers
+- [x] Contact table: virtual scrolling must handle 1000+ contacts without lag (@tanstack/react-virtual)
 - [ ] Add Zod validation to all API routes
-- [ ] Open Graph tags, robots.txt, sitemap.xml
+- [x] Open Graph tags, robots.txt, sitemap.xml
 
 ## PHASE 8: KANBAN POLISH — MAKE IT FEEL PREMIUM
 - [ ] Deal card drag animation: scale to 1.03 + shadow + 2deg rotation while dragging
