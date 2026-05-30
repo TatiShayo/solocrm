@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Mail, Phone, Building, Briefcase, Tag, StickyNote, Pencil } from "lucide-react";
-import type { Deal, Task } from "@/lib/types";
+import type { Deal, Task, Activity } from "@/lib/types";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -34,8 +34,15 @@ export default async function ContactDetailPage({ params }: Props) {
     .eq("contact_id", id)
     .order("due_date", { ascending: true });
 
+  const { data: activities } = await supabase
+    .from("activity")
+    .select("*")
+    .eq("contact_id", id)
+    .order("created_at", { ascending: false });
+
   const dealsList = deals || [];
   const tasksList = tasks || [];
+  const activityList: Activity[] = activities || [];
 
   return (
     <div className="p-8">
@@ -263,23 +270,39 @@ export default async function ContactDetailPage({ params }: Props) {
             </div>
             <div className="p-4">
               <div className="relative pl-5 border-l-2 border-muted space-y-4">
-                <div className="relative">
-                  <div className="absolute -left-[25px] h-4 w-4 rounded-full bg-muted border-2 border-background" />
-                  <p className="text-sm font-medium">
-                    Contact created
+                {activityList.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">
+                    No activity recorded yet.
                   </p>
-                  <p className="text-xs text-muted-foreground">
-                    {new Date(contact.created_at).toLocaleDateString()}
-                  </p>
-                </div>
-                {contact.updated_at !== contact.created_at && (
-                  <div className="relative">
-                    <div className="absolute -left-[25px] h-4 w-4 rounded-full bg-muted border-2 border-background" />
-                    <p className="text-sm font-medium">Contact updated</p>
-                    <p className="text-xs text-muted-foreground">
-                      {new Date(contact.updated_at).toLocaleDateString()}
-                    </p>
-                  </div>
+                ) : (
+                  activityList.map((activity) => {
+                    const isDealChange = activity.type === "deal_change";
+                    const isTaskCompleted = activity.type === "task_completed";
+                    const isContactCreated = activity.type === "contact_created";
+                    const isContactUpdated = activity.type === "contact_updated";
+                    const dotColor = isDealChange
+                      ? "bg-blue-500"
+                      : isTaskCompleted
+                        ? "bg-green-500"
+                        : isContactCreated
+                          ? "bg-blue-500"
+                          : isContactUpdated
+                            ? "bg-muted-foreground"
+                            : "bg-muted-foreground";
+                    return (
+                      <div key={activity.id} className="relative">
+                        <div
+                          className={`absolute -left-[25px] h-4 w-4 rounded-full ${dotColor} border-2 border-background`}
+                        />
+                        <p className="text-sm font-medium">
+                          {activity.description}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(activity.created_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                    );
+                  })
                 )}
               </div>
             </div>

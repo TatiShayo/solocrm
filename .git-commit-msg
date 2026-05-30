@@ -1,6 +1,0 @@
-feat: revenue forecast and stats on main dashboard page
-
-Reuse existing RevenueForecast component on the main dashboard, add
-contact/deal/won stat cards with exact counts.
-
-Co-authored-by: CommandCodeBot <noreply@commandcode.ai>

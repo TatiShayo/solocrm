@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { LogOut, Users, Kanban } from "lucide-react";
+import { LogOut, Users, Kanban, ListChecks } from "lucide-react";
 
 export default async function DashboardLayout({
   children,

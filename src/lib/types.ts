@@ -54,13 +54,17 @@ export interface Task {
   due_date: string;
   completed: boolean;
   completed_at: string | null;
+  notes: string | null;
   created_at: string;
   updated_at: string;
 }
 
-export interface ContactActivity {
+export interface Activity {
   id: string;
-  type: "note" | "email" | "call" | "task_completed" | "deal_change";
+  user_id: string;
+  contact_id: string | null;
+  deal_id: string | null;
+  type: "note" | "email" | "call" | "task_completed" | "deal_change" | "contact_created" | "contact_updated";
   description: string;
   created_at: string;
 }

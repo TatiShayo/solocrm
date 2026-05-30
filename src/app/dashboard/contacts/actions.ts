@@ -76,13 +76,31 @@ export async function saveContact(formData: ContactFormData, contactId?: string)
     if (error) {
       return { error: error.message };
     }
+
+    await supabase.from("activity").insert({
+      user_id: user.id,
+      contact_id: contactId,
+      type: "contact_updated",
+      description: `Contact "${payload.name}" updated`,
+    });
   } else {
-    const { error } = await supabase
+    const { data: inserted, error } = await supabase
       .from("contacts")
-      .insert(payload);
+      .insert(payload)
+      .select("id")
+      .single();
 
     if (error) {
       return { error: error.message };
+    }
+
+    if (inserted) {
+      await supabase.from("activity").insert({
+        user_id: user.id,
+        contact_id: inserted.id,
+        type: "contact_created",
+        description: `Contact "${payload.name}" created`,
+      });
     }
   }
 

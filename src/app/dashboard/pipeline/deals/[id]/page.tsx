@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Pencil, DollarSign, Percent, Calendar, StickyNote, Trophy, XCircle, Undo2 } from "lucide-react";
-import type { Task } from "@/lib/types";
+import type { Task, Activity } from "@/lib/types";
 import { markDealWon, markDealLost, reopenDeal } from "../actions";
 
 interface Props {
@@ -42,7 +42,14 @@ export default async function DealDetailPage({ params }: Props) {
     .eq("deal_id", id)
     .order("due_date", { ascending: true });
 
+  const { data: activities } = await supabase
+    .from("activity")
+    .select("*")
+    .eq("deal_id", id)
+    .order("created_at", { ascending: false });
+
   const tasksList = tasks || [];
+  const activityList: Activity[] = activities || [];
 
   return (
     <div className="p-8">
@@ -255,54 +262,33 @@ export default async function DealDetailPage({ params }: Props) {
             </div>
             <div className="p-4">
               <div className="relative pl-5 border-l-2 border-muted space-y-4">
-                <div className="relative">
-                  <div className="absolute -left-[25px] h-4 w-4 rounded-full bg-blue-500 border-2 border-background" />
-                  <p className="text-sm font-medium">Deal created</p>
-                  <p className="text-xs text-muted-foreground">
-                    {new Date(deal.created_at).toLocaleDateString()}
+                {activityList.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">
+                    No activity recorded yet.
                   </p>
-                  <p className="text-xs text-muted-foreground">
-                    Stage: {stage?.name || "Unknown"} · Value: ${deal.value.toLocaleString()} · {deal.probability}%
-                  </p>
-                </div>
-
-                {deal.status === "won" && (
-                  <div className="relative">
-                    <div className="absolute -left-[25px] h-4 w-4 rounded-full bg-green-500 border-2 border-background" />
-                    <p className="text-sm font-medium text-green-700 dark:text-green-300">
-                      Deal won
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {new Date(deal.updated_at).toLocaleDateString()}
-                    </p>
-                  </div>
-                )}
-
-                {deal.status === "lost" && (
-                  <div className="relative">
-                    <div className="absolute -left-[25px] h-4 w-4 rounded-full bg-red-500 border-2 border-background" />
-                    <p className="text-sm font-medium text-red-700 dark:text-red-300">
-                      Deal lost
-                    </p>
-                    {deal.lost_reason && (
-                      <p className="text-xs text-muted-foreground">
-                        Reason: {deal.lost_reason}
-                      </p>
-                    )}
-                    <p className="text-xs text-muted-foreground">
-                      {new Date(deal.updated_at).toLocaleDateString()}
-                    </p>
-                  </div>
-                )}
-
-                {deal.updated_at !== deal.created_at && deal.status === "open" && (
-                  <div className="relative">
-                    <div className="absolute -left-[25px] h-4 w-4 rounded-full bg-muted border-2 border-background" />
-                    <p className="text-sm font-medium">Deal updated</p>
-                    <p className="text-xs text-muted-foreground">
-                      {new Date(deal.updated_at).toLocaleDateString()}
-                    </p>
-                  </div>
+                ) : (
+                  activityList.map((activity) => {
+                    const isDealChange = activity.type === "deal_change";
+                    const isTaskCompleted = activity.type === "task_completed";
+                    const dotColor = isTaskCompleted
+                      ? "bg-green-500"
+                      : isDealChange
+                        ? "bg-blue-500"
+                        : "bg-muted-foreground";
+                    return (
+                      <div key={activity.id} className="relative">
+                        <div
+                          className={`absolute -left-[25px] h-4 w-4 rounded-full ${dotColor} border-2 border-background`}
+                        />
+                        <p className="text-sm font-medium">
+                          {activity.description}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(activity.created_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                    );
+                  })
                 )}
               </div>
             </div>

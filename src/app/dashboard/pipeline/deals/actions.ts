@@ -73,12 +73,28 @@ export async function markDealWon(dealId: string) {
 
   if (!user) redirect("/auth/login");
 
+  const { data: deal } = await supabase
+    .from("deals")
+    .select("title, contact_id")
+    .eq("id", dealId)
+    .single();
+
   const { error } = await supabase
     .from("deals")
     .update({ status: "won", updated_at: new Date().toISOString() })
     .eq("id", dealId);
 
   if (error) return { error: error.message };
+
+  if (deal) {
+    await supabase.from("activity").insert({
+      user_id: user.id,
+      contact_id: deal.contact_id,
+      deal_id: dealId,
+      type: "deal_change",
+      description: `Deal "${deal.title}" won`,
+    });
+  }
 
   revalidatePath("/dashboard/pipeline");
   return { success: true };
@@ -92,6 +108,12 @@ export async function markDealLost(dealId: string, reason: string) {
 
   if (!user) redirect("/auth/login");
 
+  const { data: deal } = await supabase
+    .from("deals")
+    .select("title, contact_id")
+    .eq("id", dealId)
+    .single();
+
   const { error } = await supabase
     .from("deals")
     .update({
@@ -102,6 +124,19 @@ export async function markDealLost(dealId: string, reason: string) {
     .eq("id", dealId);
 
   if (error) return { error: error.message };
+
+  if (deal) {
+    const desc = reason.trim()
+      ? `Deal "${deal.title}" lost - ${reason.trim()}`
+      : `Deal "${deal.title}" lost`;
+    await supabase.from("activity").insert({
+      user_id: user.id,
+      contact_id: deal.contact_id,
+      deal_id: dealId,
+      type: "deal_change",
+      description: desc,
+    });
+  }
 
   revalidatePath("/dashboard/pipeline");
   return { success: true };
@@ -115,6 +150,12 @@ export async function reopenDeal(dealId: string) {
 
   if (!user) redirect("/auth/login");
 
+  const { data: deal } = await supabase
+    .from("deals")
+    .select("title, contact_id")
+    .eq("id", dealId)
+    .single();
+
   const { error } = await supabase
     .from("deals")
     .update({
@@ -125,6 +166,16 @@ export async function reopenDeal(dealId: string) {
     .eq("id", dealId);
 
   if (error) return { error: error.message };
+
+  if (deal) {
+    await supabase.from("activity").insert({
+      user_id: user.id,
+      contact_id: deal.contact_id,
+      deal_id: dealId,
+      type: "deal_change",
+      description: `Deal "${deal.title}" reopened`,
+    });
+  }
 
   revalidatePath("/dashboard/pipeline");
   return { success: true };
