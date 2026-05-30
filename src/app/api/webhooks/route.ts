@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import { validateBody, webhookSchema } from "@/lib/validation";
 
 export async function GET() {
   const supabase = await createClient();
@@ -20,34 +21,16 @@ export async function POST(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  let body: { url: string; events: string[] };
+  let rawBody: unknown;
   try {
-    body = await request.json();
+    rawBody = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { url, events } = body;
-  if (!url?.trim()) {
-    return NextResponse.json({ error: "URL is required" }, { status: 400 });
-  }
-
-  try {
-    new URL(url);
-  } catch {
-    return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
-  }
-
-  if (!events || events.length === 0) {
-    return NextResponse.json({ error: "At least one event is required" }, { status: 400 });
-  }
-
-  const validEvents = ["deal.created", "deal.stage_changed", "deal.won", "deal.lost", "contact.created"];
-  for (const event of events) {
-    if (!validEvents.includes(event)) {
-      return NextResponse.json({ error: `Invalid event: ${event}` }, { status: 400 });
-    }
-  }
+  const parsed = validateBody(rawBody, webhookSchema);
+  if (parsed instanceof NextResponse) return parsed;
+  const { url, events } = parsed;
 
   const { data: webhook, error } = await supabase
     .from("webhooks")

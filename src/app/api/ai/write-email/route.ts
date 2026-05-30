@@ -1,23 +1,23 @@
 import { createClient } from "@/lib/supabase/server";
 import { createChatCompletion } from "@/lib/openai";
 import { NextRequest, NextResponse } from "next/server";
+import { validateBody, writeEmailSchema } from "@/lib/validation";
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  let body: { contactId: string; prompt: string };
+  let rawBody: unknown;
   try {
-    body = await request.json();
+    rawBody = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { contactId, prompt } = body;
-  if (!prompt?.trim()) {
-    return NextResponse.json({ error: "Prompt is required" }, { status: 400 });
-  }
+  const parsed = validateBody(rawBody, writeEmailSchema);
+  if (parsed instanceof NextResponse) return parsed;
+  const { contactId, prompt } = parsed;
 
   const { data: contact } = await supabase
     .from("contacts")

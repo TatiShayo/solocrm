@@ -59,7 +59,7 @@
 - [x] Pipeline kanban: test drag-and-drop at 375px (touch events) — must work on mobile
 - [x] All deal values: use Intl.NumberFormat(locale, {style:'currency', currency}) — never raw numbers
 - [x] Contact table: virtual scrolling must handle 1000+ contacts without lag (@tanstack/react-virtual)
-- [ ] Add Zod validation to all API routes
+- [x] Add Zod validation to all API routes
 - [x] Open Graph tags, robots.txt, sitemap.xml
 
 ## PHASE 8: KANBAN POLISH — MAKE IT FEEL PREMIUM

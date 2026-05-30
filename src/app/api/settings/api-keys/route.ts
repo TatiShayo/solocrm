@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import { randomBytes } from "crypto";
+import { validateBody, apiKeySchema } from "@/lib/validation";
 
 function generateApiKey(): string {
   return `sk_${randomBytes(32).toString("hex")}`;
@@ -25,10 +26,14 @@ export async function POST(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { name } = await request.json().catch(() => ({}));
-  if (!name?.trim()) {
-    return NextResponse.json({ error: "Name is required" }, { status: 400 });
+  const rawBody = await request.json().catch(() => null);
+  if (rawBody === null) {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
+
+  const parsed = validateBody(rawBody, apiKeySchema);
+  if (parsed instanceof NextResponse) return parsed;
+  const { name } = parsed;
 
   const key = generateApiKey();
 

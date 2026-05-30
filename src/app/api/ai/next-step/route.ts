@@ -1,23 +1,23 @@
 import { createClient } from "@/lib/supabase/server";
 import { createChatCompletion } from "@/lib/openai";
 import { NextRequest, NextResponse } from "next/server";
+import { validateBody, dealIdSchema } from "@/lib/validation";
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  let body: { dealId: string };
+  let rawBody: unknown;
   try {
-    body = await request.json();
+    rawBody = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { dealId } = body;
-  if (!dealId) {
-    return NextResponse.json({ error: "dealId is required" }, { status: 400 });
-  }
+  const parsed = validateBody(rawBody, dealIdSchema);
+  if (parsed instanceof NextResponse) return parsed;
+  const { dealId } = parsed;
 
   const { data: deal } = await supabase
     .from("deals")
