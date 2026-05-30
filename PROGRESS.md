@@ -56,3 +56,5 @@
 
 [2026-05-30] Phase 6 done: AI email writer, AI deal summary, AI next step suggester — all three API routes and UI complete with copy-to-clipboard
 [2026-05-30] Unit tests done: 28 tests across pipeline-math, sequence-scheduling, merge-tags — all passing
+[2026-05-30] E2E test: Playwright workflow spec for contact → deal → pipeline → won
+[2026-05-30] Mobile responsive: dashboard nav (icon-only on mobile), contacts table (hide company/email/source/tags on mobile, smaller padding), kanban board (full-width columns, stack vertically on mobile)
