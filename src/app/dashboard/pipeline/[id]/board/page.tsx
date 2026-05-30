@@ -73,7 +73,7 @@ export default async function PipelineBoardPage({ params }: Props) {
         </Link>
       </div>
 
-      <KanbanBoard stages={stages} deals={normalized} stageNames={{}} />
+      <KanbanBoard stages={stages} deals={normalized} stageNames={{}} pipelineId={pipeline.id} />
     </div>
   );
 }

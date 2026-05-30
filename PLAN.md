@@ -63,13 +63,13 @@
 - [x] Open Graph tags, robots.txt, sitemap.xml
 
 ## PHASE 8: KANBAN POLISH — MAKE IT FEEL PREMIUM
-- [ ] Deal card drag animation: scale to 1.03 + shadow + 2deg rotation while dragging
-- [ ] Column totals update live as drag happens (optimistic — don't wait for DB)
-- [ ] "Won" animation: when deal dragged to Won column → confetti burst (CSS keyframes, no library)
-- [ ] "Lost" animation: when deal dragged to Lost → card fades to gray with strikethrough
-- [ ] Deal age indicator: if deal stuck in same stage >7 days → amber dot. >14 days → red dot
+- [x] Deal card drag animation: scale to 1.03 + shadow + 2deg rotation while dragging
+- [x] Column totals update live as drag happens (optimistic — don't wait for DB)
+- [x] "Won" animation: when deal dragged to Won column → confetti burst (CSS keyframes, no library)
+- [x] "Lost" animation: when deal dragged to Lost → card fades to gray with strikethrough
+- [x] Deal age indicator: if deal stuck in same stage >7 days → amber dot. >14 days → red dot
 - [ ] Revenue forecast bar: above kanban, shows "(sum of deal values × probability)" rolling total
-- [ ] Quick edit: click deal value directly on card to edit inline without opening modal
+- [x] Quick edit: click deal value directly on card to edit inline without opening modal
 - [ ] Keyboard shortcut: press N on pipeline page → opens new deal modal
 
 ## PHASE 9: EMAIL SEQUENCE ENGINE — COMPLETE IT
@@ -175,3 +175,57 @@
 - [ ] README.md: setup, env vars, Supabase schema setup, first-time user guide
 - [ ] DEPLOY.md: Vercel deployment, Stripe product creation for Pro plan
 - [ ] Landing page A/B headline test note in README: suggest testing "No BS pricing" vs "Built for solopreneurs"
+
+
+## PHASE 14: INTEGRATIONS HUB
+- [ ] Create /dashboard/integrations page: grid of integration cards (Zapier, Slack, Gmail, Cal.com, Stripe, HubSpot Import)
+- [ ] Zapier webhook: when deal stage changes → POST to user's Zapier webhook URL (stored in profiles.zapier_webhook_url)
+- [ ] Slack notification: when deal won → POST to user's Slack webhook URL with deal details (profiles.slack_webhook_url)
+- [ ] Gmail integration stub: connect Gmail → sync sent emails to contact timeline (OAuth flow, store token, mark as "coming soon" if complex)
+- [ ] Cal.com / Calendly sync stub: when meeting booked → auto-create task in SoloCRM (webhook receiver endpoint)
+- [ ] HubSpot CSV import: /dashboard/import — upload HubSpot contacts export CSV → parse with papaparse → map columns → bulk insert
+- [ ] Pipedrive CSV import: same page, different column mapping for Pipedrive format
+- [ ] Export package: one-click export of ALL data (contacts + deals + tasks + notes) as ZIP of CSVs
+
+## PHASE 15: ADVANCED PIPELINE FEATURES
+- [ ] Multiple pipelines: user can create additional pipelines (e.g. "New Business" + "Renewal" + "Partnerships")
+- [ ] Pipeline switch: dropdown in pipeline view to switch between pipelines
+- [ ] Pipeline templates: 5 pre-built pipeline templates (SaaS Sales, Agency, Consulting, Ecommerce, Recruiting) — one-click apply
+- [ ] Deal scoring: auto-score deals 1-100 based on: days since last activity, probability, value, contact engagement
+- [ ] Stale deal detection: deal with no activity in 14+ days → red "stale" badge → daily digest of stale deals
+- [ ] Bulk deal operations: select multiple deals → bulk update stage / bulk assign / bulk delete
+- [ ] Deal cloning: duplicate a deal with all its tasks and notes (useful for repeat business with same client)
+
+## PHASE 16: COMMUNICATION CENTER
+- [ ] Inbox view: /dashboard/inbox — shows all scheduled emails, tasks due today, follow-ups overdue, deals needing attention — one unified to-do list
+- [ ] Email templates library: user saves frequently-used email templates with merge tags — browse and insert in AI email writer
+- [ ] Meeting scheduler link: user sets their Calendly/BookFlow link in settings → "Schedule Meeting" button on contact detail inserts link in email
+- [ ] Call logger: "Log a call" button on contact → modal with call duration, outcome (interested/not interested/callback), notes → adds to timeline
+- [ ] SMS log: "Log SMS" button → records that an SMS was sent (no actual sending — just tracking)
+- [ ] WhatsApp quick link: each contact with a phone number → WhatsApp icon → opens wa.me/[phone] in new tab
+
+## PHASE 17: REVENUE INTELLIGENCE
+- [ ] Win probability AI: for each deal, "Predict win probability" button → sends deal info + activity history to OpenAI → returns probability estimate with reasoning
+- [ ] Pipeline health score: composite score (0-100) based on: deals moving vs stuck, days to close forecast, conversion rate trend
+- [ ] Seasonal analysis: compare Q1 vs Q2 vs Q3 vs Q4 win rates — detect seasonal patterns
+- [ ] Deal value tracking: for recurring revenue deals, track MRR impact of each deal won
+- [ ] Revenue goal tracker: user sets monthly revenue goal → dashboard shows progress bar (deals won this month vs goal)
+- [ ] Lead source ROI: which lead source produces highest LTV? — table showing avg deal size × win rate per source
+
+## PHASE 18: COLLABORATION (PRO GROWTH FEATURE)
+- [ ] Shared pipeline: invite a partner or VA to see the pipeline (read-only or edit access)
+- [ ] Activity mentions: when writing a note, @mention a collaborator → they get email notification
+- [ ] Deal assignment: assign deal to a team member (profiles table handles this — just add assigned_to field)
+- [ ] Team inbox: shared view of all unresponded leads across team members
+- [ ] Collision detection: if two team members open the same deal → show "John is also viewing this deal"
+
+## PHASE 19: LAUNCH & GROWTH
+- [ ] Trial: 14-day full Pro trial on signup → onboarding email sequence (day 1, 3, 7, 12, 14)
+- [ ] Onboarding checklist: 6 steps (import contacts → create pipeline → add deals → create sequence → connect Zapier → invite team)
+- [ ] "HubSpot refugee" landing page section: "Left HubSpot? Import your data in 2 minutes" with CSV import CTA
+- [ ] Public roadmap page /roadmap: shows upcoming features — users can upvote (store votes in DB)
+- [ ] Changelog page /changelog: shows what was recently shipped — builds trust with users
+- [ ] Lighthouse ≥ 85 on all pages
+- [ ] Full README.md + DEPLOY.md
+- [ ] Product Hunt assets
+- [ ] AppSumo listing prep: create APPSUMO_BRIEF.md — lifetime deal framing, feature list, tier breakdown

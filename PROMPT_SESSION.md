@@ -1,15 +1,15 @@
 You are a senior fullstack engineer. Continue building solocrm autonomously.
 
 SESSION STATE:
-Tasks remaining: 88
-Tasks completed: 43
+Tasks remaining: 123
+Tasks completed: 49
 Current phase: PHASE 8: KANBAN POLISH — MAKE IT FEEL PREMIUM
 Recent commits:
+2084833 done: column totals update live as drag happens — optimistic preview via onDragOver
+7b0ad67 done: deal card drag animation — scale to 1.03 + shadow + 2deg rotation, original card fades while dragging
 83ca51f done: Zod validation on all API POST routes, shared validation module
 43ecdac done: virtual scrolling contacts table, robots.txt, sitemap.xml
 93a94ce done: currency formatting with Intl.NumberFormat, dashboard loading/error boundaries, kanban TouchSensor for mobile
-4f95d66 done: Zapier webhook triggers — deal stage change/contact created events fire to custom webhook URLs, settings UI
-7b33387 done: meeting notes — text field per contact, AI generates action items from notes
 
 KNOWN ISSUES FROM PREVIOUS SESSIONS:
 # SoloCRM Learnings & Known Issues
@@ -114,5 +114,5 @@ Search the web if stuck on an error.
 
 Build exactly to the PRODUCT SPECIFICATION above. Every page, feature, and design detail must match.
 
-You have 88 tasks remaining. Complete as many as possible before context runs out.
+You have 123 tasks remaining. Complete as many as possible before context runs out.
 Start now. First task. Go.
