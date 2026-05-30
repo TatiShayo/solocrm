@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Mail, Phone, Building, Briefcase, Tag, StickyNote, Pencil } from "lucide-react";
 import type { Deal, Task, Activity } from "@/lib/types";
+import { MeetingNotesCard } from "../_components/meeting-notes-card";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -153,6 +154,11 @@ export default async function ContactDetailPage({ params }: Props) {
               </p>
             </div>
           )}
+
+          <MeetingNotesCard
+            contactId={contact.id}
+            meetingNotes={contact.meeting_notes ?? null}
+          />
         </div>
 
         <div className="lg:col-span-2 space-y-6">

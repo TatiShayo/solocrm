@@ -13,6 +13,7 @@ interface ContactFormData {
   source?: "cold" | "referral" | "inbound" | "";
   tags?: string | undefined;
   notes?: string | undefined;
+  meeting_notes?: string | undefined;
 }
 
 export async function saveContact(formData: ContactFormData, contactId?: string) {
@@ -48,6 +49,7 @@ export async function saveContact(formData: ContactFormData, contactId?: string)
     source,
     tags: tags.length > 0 ? tags : null,
     notes: (formData.notes ?? "").trim() || null,
+    meeting_notes: (formData.meeting_notes ?? "").trim() || null,
   };
 
   // Duplicate email check

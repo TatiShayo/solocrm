@@ -17,6 +17,7 @@ const contactSchema = z.object({
   source: z.enum(["cold", "referral", "inbound", ""]),
   tags: z.string().optional(),
   notes: z.string().optional(),
+  meeting_notes: z.string().optional(),
 });
 
 type ContactFormValues = z.infer<typeof contactSchema>;
@@ -31,6 +32,7 @@ interface ContactData {
   source: "cold" | "referral" | "inbound" | null;
   tags: string[] | null;
   notes: string | null;
+  meeting_notes: string | null;
 }
 
 interface Props {
@@ -51,6 +53,7 @@ export function ContactForm({ contact }: Props) {
     source: contact?.source || "",
     tags: contact?.tags?.join(", ") || "",
     notes: contact?.notes || "",
+    meeting_notes: contact?.meeting_notes || "",
   };
 
   const {
@@ -199,6 +202,19 @@ export function ContactForm({ contact }: Props) {
           {...register("notes")}
           className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           placeholder="Any notes about this contact..."
+        />
+      </div>
+
+      <div className="space-y-2">
+        <label htmlFor="meeting_notes" className="text-sm font-medium">
+          Meeting Notes
+        </label>
+        <textarea
+          id="meeting_notes"
+          rows={6}
+          {...register("meeting_notes")}
+          className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          placeholder="Paste your meeting notes here. AI can generate action items from them."
         />
       </div>
 

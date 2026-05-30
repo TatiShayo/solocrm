@@ -47,8 +47,8 @@
     47|
     48|## PHASE 8: ADVANCED
     49|- [x] Chrome extension: capture LinkedIn profile → auto-add as contact in SoloCRM
-    50|- [ ] Email tracking: track opens and clicks on sent emails (pixel tracking via Resend webhooks)
-    51|- [ ] Meeting notes: text field per contact, AI generates action items from notes
+    50|- [x] Email tracking: track opens and clicks on sent emails (pixel tracking via Resend webhooks)
+    51|- [x] Meeting notes: text field per contact, AI generates action items from notes
     52|- [ ] Zapier webhook: trigger automations when deal stage changes or contact added
     53|
 

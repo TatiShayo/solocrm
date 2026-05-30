@@ -1,15 +1,15 @@
 You are a senior fullstack engineer. Continue building solocrm autonomously.
 
 SESSION STATE:
-Tasks remaining: 99
-Tasks completed: 32
+Tasks remaining: 98
+Tasks completed: 33
 Current phase: 48|## PHASE 8: ADVANCED
 Recent commits:
+e6e78f5 done: email tracking — open/click events via Resend webhooks
 587775d done: lighthouse optimizations - metadata, SEO, image formats, console removal in prod
 8595f96 done: mobile responsive - contacts table, kanban board, dashboard nav at 375px
 5894db6 done: E2E test - contact → deal → pipeline → won workflow spec
 35f3e3e done: unit tests - pipeline math, sequence scheduling, merge tag replacement (28 tests)
-dada4f9 done: AI Assistant - deals API endpoint, copy-to-clipboard, cleanup dead code
 
 KNOWN ISSUES FROM PREVIOUS SESSIONS:
 # SoloCRM Learnings & Known Issues
@@ -114,5 +114,5 @@ Search the web if stuck on an error.
 
 Build exactly to the PRODUCT SPECIFICATION above. Every page, feature, and design detail must match.
 
-You have 99 tasks remaining. Complete as many as possible before context runs out.
+You have 98 tasks remaining. Complete as many as possible before context runs out.
 Start now. First task. Go.

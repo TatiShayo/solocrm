@@ -9,6 +9,7 @@ export interface Contact {
   source: "cold" | "referral" | "inbound" | null;
   tags: string[] | null;
   notes: string | null;
+  meeting_notes: string | null;
   is_opted_out: boolean;
   created_at: string;
   updated_at: string;

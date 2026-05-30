@@ -72,3 +72,9 @@
 [2026-05-30 20:44:20.184409] Session #2: 99 tasks left
 
 [2026-05-30 20:50:00.822858] Session #3: 99 tasks left
+
+[2026-05-30] Email tracking done: email_events table, /api/webhooks/resend with Svix sig verification, resend_message_id stored on send for correlation
+
+[2026-05-30 21:10:13.699632] Session #4: 98 tasks left
+
+[2026-05-30 21:18:06.239076] Session #5: 98 tasks left
