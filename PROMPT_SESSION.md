@@ -5,11 +5,11 @@ Tasks remaining: 162
 Tasks completed: 51
 Current phase: 75|## PHASE 9: EMAIL SEQUENCE ENGINE — COMPLETE IT
 Recent commits:
+42428be feat: initial commit
 f275b10 done: keyboard shortcut N on pipeline page opens new deal modal
 521b848 done: revenue forecast bar above kanban — weighted total Σ (deal value × probability) with progress bar
 2084833 done: column totals update live as drag happens — optimistic preview via onDragOver
 7b0ad67 done: deal card drag animation — scale to 1.03 + shadow + 2deg rotation, original card fades while dragging
-83ca51f done: Zod validation on all API POST routes, shared validation module
 
 KNOWN ISSUES FROM PREVIOUS SESSIONS:
 # SoloCRM Learnings & Known Issues
