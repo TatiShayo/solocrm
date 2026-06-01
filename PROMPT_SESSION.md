@@ -1,118 +1,55 @@
-You are a senior fullstack engineer. Continue building solocrm autonomously.
+Build the SoloCRM Analytics Dashboard at /dashboard/analytics.
 
-SESSION STATE:
-Tasks remaining: 162
-Tasks completed: 51
-Current phase: 75|## PHASE 9: EMAIL SEQUENCE ENGINE — COMPLETE IT
-Recent commits:
-42428be feat: initial commit
-f275b10 done: keyboard shortcut N on pipeline page opens new deal modal
-521b848 done: revenue forecast bar above kanban — weighted total Σ (deal value × probability) with progress bar
-2084833 done: column totals update live as drag happens — optimistic preview via onDragOver
-7b0ad67 done: deal card drag animation — scale to 1.03 + shadow + 2deg rotation, original card fades while dragging
+You are a senior fullstack engineer. Read the existing codebase patterns and build exactly what's specified below. Output every file as COMPLETE code — no "..." or "// rest stays the same".
 
-KNOWN ISSUES FROM PREVIOUS SESSIONS:
-# SoloCRM Learnings & Known Issues
+═══ CURRENT STATE ═══
+Build passes. Dashboard layout has nav for Contacts, Pipeline, Tasks, Sequences, Settings. No analytics page yet.
 
+═══ TASKS ═══
 
-═══ PRODUCT SPECIFICATION (from batch2-build-prompts) ═══
-## PROMPT 5 — BUILD SOLOCRM
-*(Open solocrm/ in a new CMD → paste this)*
+Task 1: Add "Analytics" nav link to dashboard layout
+File: src/app/dashboard/layout.tsx
+Add a BarChart3 icon link to /dashboard/analytics next to Settings in both desktop and mobile navs.
 
----
+Task 2: Create analytics dashboard page
+File: src/app/dashboard/analytics/page.tsx
+Server component that fetches summary stats and renders child client components. Fetch:
+- Pipeline: all deals with status, value, probability, close_date, source, created_at
+- Contacts: all contacts with source, created_at
+- Won deals count, total value won this month
+Pass data to client components.
 
-```
-You are a senior fullstack engineer. Build SoloCRM — a dead-simple, fully-featured CRM for solopreneurs at $10/month flat — in this Next.js project. YOLO MODE. Build everything. No questions.
+Task 3: Pipeline velocity card
+File: src/app/dashboard/analytics/_components/pipeline-velocity.tsx
+"use client". Shows average days per stage. Input: deals[] with stage info. 
+Calculate: for each deal in a stage, how many days was it there. Average per stage. Display as a horizontal bar chart (CSS bars, not recharts) with stage name and avg days label. Color: blue-500 bars.
 
-═══════════════════════════════════════
-PRODUCT OVERVIEW
-═══════════════════════════════════════
-SoloCRM kills HubSpot's bait-and-switch pricing model. HubSpot starts free then demands $800/mo to unlock real features. SoloCRM is $10/mo, nothing ever gated, no upsells, no surprise limits. Everything a solo founder needs to manage their pipeline.
+Task 4: Win rate by source card
+File: src/app/dashboard/analytics/_components/win-rate-source.tsx
+"use client". Recharts pie chart. Input: contacts[] with source field. Group contacts by source (cold/referral/inbound). For each source: total deals ÷ won deals = win rate %. Show PieChart with 3 slices (cold=blue, referral=green, inbound=purple). Below chart: table with source name, total deals, won deals, win rate %.
 
-Tagline: "Every lead. Every deal. No BS pricing."
-Target: Solopreneurs, freelancers, consultants, indie hackers, small agency owners, anyone who tracks sales without a team.
+Task 5: Deal size distribution card
+File: src/app/dashboard/analytics/_components/deal-size-dist.tsx
+"use client". Input: deals[] with value. Bucket deals into ranges: $0-1K, $1K-5K, $5K-10K, $10K-50K, $50K+. Show BarChart (recharts) with range labels and deal count. Color: indigo.
 
-Pricing:
-- Free: 250 contacts, 1 pipeline, no AI, no email sequences
-- Pro ($10/mo): Unlimited everything, AI assistant, email sequences, bulk import, full analytics
+Task 6: Monthly closed revenue chart
+File: src/app/dashboard/analytics/_components/monthly-revenue.tsx
+"use client". Input: won deals with close_date and value. Group by month for last 12 months. Show AreaChart (recharts) with month label on x-axis and revenue on y-axis. Gradient fill. Color: emerald.
 
-═══════════════════════════════════════
-TECH STACK
-═══════════════════════════════════════
-- Next.js 14 App Router + TypeScript
-- Supabase (auth + DB)
-- Stripe (subscriptions)
-- OpenAI GPT-4o-mini (AI email writer, deal summary)
-- Resend (sequence emails)
-- shadcn/ui + Tailwind (dark, cyan accent #06b6d4)
-- @dnd-kit/core + @dnd-kit/sortable (Kanban drag-and-drop)
-- @tanstack/react-table (contacts table, sortable/filterable)
-- papaparse (CSV import)
-- Recharts (revenue forecast chart)
-- Framer Motion + Sonner
+Task 7: Top contacts & export
+File: src/app/dashboard/analytics/page.tsx (update the existing file)
+Add "Top 10 Contacts by Deal Value" table below charts. Table: rank, contact name, company, total deal value, deal count. Add "Export CSV" button on top right that downloads a CSV of all analytics data.
 
-═══════════════════════════════════════
-ALL PAGES TO BUILD
-═══════════════════════════════════════
+═══ DESIGN ═══
+Neutral/clean palette: slate backgrounds, blue primary (#3b82f6), gray borders.
+Recharts library is already installed.
+Use shadcn Card component wrapper for each chart section.
+Each chart card has a title, the chart, and a small summary text below.
+All charts must be responsive (width="100%" height={300}).
+Responsive grid: 2 columns on desktop, 1 on mobile.
 
-1. LANDING PAGE (src/app/page.tsx)
-   - Navbar: SoloCRM logo, Features, Pricing, Login, "Start Free — No Card"
-   - Hero: "Every Lead. Every Deal. No BS Pricing." Big headline. Subtitle: "HubSpot starts free, then charges $800/mo. SoloCRM is $10/mo. Forever. Nothing gated. No surprises."
-   - Show a kanban board screenshot mockup in the hero
-   - Feature highlights: 6 features (Contacts, Kanban Pipeline, Task Manager, Email Sequences, AI Assistant, Analytics)
-   - "HubSpot trap" explainer section: visual showing HubSpot free → features locked → $800/mo. Then: SoloCRM $10/mo, everything unlocked.
-   - Comparison table: SoloCRM vs HubSpot vs Pipedrive vs Monday CRM (SoloCRM wins on price+simplicity)
-   - Pricing: 2 cards only (Free / Pro $10) — keep it extremely simple
-   - Testimonials: 3 from indie hackers / consultants / freelancers
-   - FAQ: 6 questions (can I import from HubSpot, is there a contract, how many pipelines, etc.)
-   - Footer
-
-2. AUTH: login, signup, reset, callback (standard)
-
-3. DASHBOARD (src/app/dashboard/page.tsx)
-   - Sidebar: logo, nav links (Dashboard, Contacts, Pipeline, Tasks, Sequences, Analytics, Settings, Billing)
-   - Stats: Open Deals (count + total value), Deals Won This Month (count + value), Overdue Tasks, Contacts Added This Week
-   - Revenue Forecast: recharts bar chart showing (sum of deal values × probability) per month for next 6 months
-   - Pipeline health: small kanban preview showing count and value per stage
-   - Tasks due today and tomorrow: list with contact name, task type, contact link
-   - Recent activity feed: deal moved, contact added, task completed (last 10 events)
-
-4. CONTACTS (src/app/dashboard/contacts/page.tsx)
-   - @tanstack/react-table powered table (virtual scrolling for large lists)
-   - Columns: select checkbox, name, company, email, phone, source, tags, created date, actions
-   - Sortable columns, resizable (optional)
-   - Filter bar: search by name/email/company, filter by tag (multi-select), filter by source
-   - Row click → opens contact detail sidebar (not new page — sidebar overlay)
-   - Bulk actions: delete selected, add tag to selected, add to sequence
-   - "Add Contact" button → modal form
-   - "Import CSV" button → upload → papaparse → column mapping UI → import with progress bar
-   - Export CSV button
-
-5. CONTACT DETAIL SIDEBAR (component):
-   - Slides in from right (framer-motion)
-   - Header: name, company
-═══ END SPEC ═══
-
-STARTUP SEQUENCE (do this first, every session):
-1. Run: git log --oneline -10
-2. Run: npm run build 2>&1 | tail -20
-3. Run: npx tsc --noEmit 2>&1 | head -15
-4. Read PLAN.md — find the first unchecked [ ] task in the lowest-numbered phase
-5. Read LEARNINGS.md — avoid known blocked approaches
-
-LOOP PROTOCOL:
-Read PLAN.md → first [ ] task → implement it → run npm run build (must pass) →
-git add -A && git commit -m "done: [task name]" → mark [x] in PLAN.md →
-append to PROGRESS.md → move to next task IMMEDIATELY.
-
-Never stop between tasks.
-Never ask for confirmation.
-Never wait for input.
-If a task fails twice: write to LEARNINGS.md as BLOCKED, skip it, continue to next.
-Install any npm package you need: npm install [package].
-Search the web if stuck on an error.
-
-Build exactly to the PRODUCT SPECIFICATION above. Every page, feature, and design detail must match.
-
-You have 162 tasks remaining. Complete as many as possible before context runs out.
-Start now. First task. Go.
+═══ RULES ═══
+Create all files. Output COMPLETE file contents with ## File: path header.
+npm run build must pass.
+Each component must be a proper React component with correct imports.
+Use existing types from @/lib/types.

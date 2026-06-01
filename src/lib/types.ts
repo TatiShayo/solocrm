@@ -29,6 +29,7 @@ export interface Deal {
   lost_reason: string | null;
   created_at: string;
   updated_at: string;
+  contact?: Contact;
 }
 
 export interface Pipeline {
