@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SoloCRM — LinkedIn Capture</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 360px;
+      min-height: 240px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 13px;
+      background: #0a0a0b;
+      color: #e4e4e7;
+      padding: 16px;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #27272a;
+    }
+    .header svg { width: 24px; height: 24px; flex-shrink: 0; }
+    .header h1 { font-size: 15px; font-weight: 600; color: #06b6d4; }
+    .section { margin-bottom: 14px; }
+    .section label {
+      display: block;
+      font-size: 11px;
+      color: #71717a;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .section input {
+      width: 100%;
+      padding: 7px 10px;
+      background: #18181b;
+      border: 1px solid #27272a;
+      border-radius: 6px;
+      color: #e4e4e7;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .section input:focus { border-color: #06b6d4; }
+    .row { display: flex; gap: 10px; }
+    .row .section { flex: 1; }
+    .settings-toggle {
+      font-size: 11px;
+      color: #06b6d4;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      margin-bottom: 12px;
+    }
+    .settings-toggle:hover { text-decoration: underline; }
+    .settings-panel { display: none; margin-bottom: 16px; }
+    .settings-panel.visible { display: block; }
+    .error { color: #f87171; font-size: 12px; margin-bottom: 10px; display: none; }
+    .error.visible { display: block; }
+    .success { color: #34d399; font-size: 12px; margin-bottom: 10px; display: none; }
+    .success.visible { display: block; }
+    .btn {
+      width: 100%;
+      padding: 10px 0;
+      background: #06b6d4;
+      color: #0a0a0b;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn:hover { background: #0891b2; }
+    .btn:disabled { background: #3f3f46; color: #71717a; cursor: not-allowed; }
+    .status-bar {
+      text-align: center;
+      font-size: 11px;
+      color: #71717a;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2">
+      <rect x="3" y="3" width="18" height="18" rx="3" />
+      <path d="M9 12l2 2 4-4" />
+    </svg>
+    <h1>SoloCRM Capture</h1>
+  </div>
+
+  <button class="settings-toggle" id="settingsToggle">⚙ API Settings</button>
+  <div class="settings-panel" id="settingsPanel">
+    <div class="section">
+      <label>App URL</label>
+      <input type="text" id="appUrl" placeholder="https://yourapp.com" />
+    </div>
+    <div class="section">
+      <label>API Key</label>
+      <input type="password" id="apiKey" placeholder="sk_..." />
+    </div>
+    <p style="font-size:10px;color:#71717a;margin-bottom:10px;">
+      Create an API key in SoloCRM → Settings → API Keys.
+    </p>
+  </div>
+
+  <div class="row">
+    <div class="section">
+      <label>Name</label>
+      <input type="text" id="name" placeholder="John Doe" />
+    </div>
+    <div class="section">
+      <label>Company</label>
+      <input type="text" id="company" placeholder="Acme Inc" />
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="section">
+      <label>Title</label>
+      <input type="text" id="title" placeholder="CEO" />
+    </div>
+    <div class="section">
+      <label>Source</label>
+      <input type="text" id="source" value="linkedin" placeholder="linkedin" list="sources" />
+      <datalist id="sources">
+        <option value="cold" />
+        <option value="referral" />
+        <option value="inbound" />
+        <option value="linkedin" />
+      </datalist>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="section">
+      <label>Email (optional)</label>
+      <input type="email" id="email" placeholder="john@acme.com" />
+    </div>
+    <div class="section">
+      <label>Phone (optional)</label>
+      <input type="tel" id="phone" placeholder="+1 555-..." />
+    </div>
+  </div>
+
+  <div class="section">
+    <label>Notes</label>
+    <input type="text" id="notes" placeholder="Auto-captured from LinkedIn" />
+  </div>
+
+  <div class="error" id="error"></div>
+  <div class="success" id="success"></div>
+
+  <button class="btn" id="addBtn">Add to SoloCRM</button>
+  <div class="status-bar" id="statusBar">Open a LinkedIn profile to capture</div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

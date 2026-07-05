@@ -1,0 +1,10 @@
+done: email tracking — open/click events via Resend webhooks
+
+- Added email_events table migration (010)
+- Added resend_message_id column to scheduled_emails
+- Created /api/webhooks/resend route with Svix signature verification
+- Updated sendEmail to return message data for correlation
+- Updated processScheduledEmails to store resend_message_id after send
+- Installed svix for webhook signature verification
+
+Co-authored-by: CommandCodeBot <noreply@commandcode.ai>
