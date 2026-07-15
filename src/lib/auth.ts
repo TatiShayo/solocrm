@@ -1,51 +1,112 @@
 import { cookies } from 'next/headers';
+import { createHmac, scryptSync, timingSafeEqual, randomBytes } from 'crypto';
 import { db, Profile } from './db';
 
-const COOKIE_NAME = 'solocrm-session-user-id';
+const COOKIE_NAME = 'solocrm-session';
+const SESSION_SECRET = process.env.APP_SECRET || 'change-me-in-production-use-32-bytes-random';
+const DEMO_ENABLED = process.env.NODE_ENV === 'development' && !process.env.DISABLE_DEMO;
+
+function signSession(userId: string): string {
+  const hmac = createHmac('sha256', SESSION_SECRET);
+  const ts = Date.now().toString();
+  hmac.update(`${userId}:${ts}`);
+  return `${userId}:${ts}:${hmac.digest('hex')}`;
+}
+
+function verifySession(token: string): string | null {
+  const parts = token.split(':');
+  if (parts.length !== 3) return null;
+  const [userId, ts, sig] = parts;
+  const hmac = createHmac('sha256', SESSION_SECRET);
+  hmac.update(`${userId}:${ts}`);
+  const expected = hmac.digest('hex');
+  if (sig.length !== expected.length) return null;
+  try {
+    if (timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) {
+      return userId;
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
+
+function hashPassword(password: string): string {
+  const salt = randomBytes(16).toString('hex');
+  const hash = scryptSync(password, salt, 64).toString('hex');
+  return `scrypt$${salt}$${hash}`;
+}
+
+function verifyPassword(password: string, stored: string): boolean {
+  const parts = stored.split('$');
+  if (parts.length !== 3 || parts[0] !== 'scrypt') return false;
+  const [, salt, hash] = parts;
+  const computed = scryptSync(password, salt, 64).toString('hex');
+  try {
+    return timingSafeEqual(Buffer.from(hash), Buffer.from(computed));
+  } catch {
+    return false;
+  }
+}
+
+function setSessionCookie(userId: string) {
+  const cookieStore = cookies();
+  return cookieStore.set(COOKIE_NAME, signSession(userId), {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax' as const,
+    maxAge: 60 * 60 * 24 * 7,
+    path: '/'
+  });
+}
 
 /**
- * Helper to get the currently logged-in user profile.
- * Defaults to the demo user profile ('default-user') to make testing and running seamless.
+ * Returns the authenticated user profile, or null if not logged in.
+ * Only falls back to demo user in dev mode with DEMO_ENABLED=true.
  */
-export async function getCurrentUser(): Promise<Profile> {
+export async function getCurrentUser(): Promise<Profile | null> {
   try {
     const cookieStore = await cookies();
-    const userId = cookieStore.get(COOKIE_NAME)?.value;
-    
-    if (userId) {
-      const user = await db.profiles.findById(userId);
-      if (user) {
-        return user;
+    const token = cookieStore.get(COOKIE_NAME)?.value;
+    if (token) {
+      const userId = verifySession(token);
+      if (userId) {
+        const user = await db.profiles.findById(userId);
+        if (user) return user;
       }
     }
   } catch (error) {
     console.error('Error getting current user:', error);
   }
 
-  // Fallback / default to the demo user profile
-  const demoUser = await db.profiles.findById('default-user');
-  if (!demoUser) {
-    // If db was reset or not initialized properly, dynamically create the demo profile
-    return db.profiles.insert({
-      id: 'default-user',
-      email: 'solo@founder.com',
-      full_name: 'Solo Founder',
-      created_at: new Date().toISOString()
-    });
+  if (DEMO_ENABLED) {
+    const demoUser = await db.profiles.findById('default-user');
+    if (!demoUser) {
+      return db.profiles.insert({
+        id: 'default-user',
+        email: 'solo@founder.com',
+        full_name: 'Solo Founder',
+        created_at: new Date().toISOString()
+      });
+    }
+    return demoUser;
   }
-  return demoUser;
+
+  return null;
 }
 
 /**
- * Checks if the user is explicitly authenticated (not falling back to demo user).
- * Returns the profile if logged in, or null otherwise.
+ * Returns the authenticated user, never falls back to demo.
  */
 export async function getSessionUser(): Promise<Profile | null> {
   try {
     const cookieStore = await cookies();
-    const userId = cookieStore.get(COOKIE_NAME)?.value;
-    if (userId) {
-      return await db.profiles.findById(userId);
+    const token = cookieStore.get(COOKIE_NAME)?.value;
+    if (token) {
+      const userId = verifySession(token);
+      if (userId) {
+        return await db.profiles.findById(userId);
+      }
     }
   } catch (error) {
     console.error('Error checking session user:', error);
@@ -54,39 +115,43 @@ export async function getSessionUser(): Promise<Profile | null> {
 }
 
 /**
- * Sign in action. Matches email to an existing profile.
+ * Sign in with email and password.
  */
-export async function signInAction(email: string): Promise<{ success: boolean; error?: string }> {
+export async function signInAction(email: string, password: string): Promise<{ success: boolean; error?: string }> {
   if (!email || !email.includes('@')) {
     return { success: false, error: 'Please enter a valid email address.' };
+  }
+  if (!password || password.length < 8) {
+    return { success: false, error: 'Password must be at least 8 characters.' };
   }
 
   const profile = await db.profiles.find(p => p.email.toLowerCase() === email.toLowerCase());
   if (!profile) {
-    return { success: false, error: 'No profile found with this email. Please register first.' };
+    return { success: false, error: 'No profile found with this email.' };
+  }
+  if (!profile.password_hash) {
+    return { success: false, error: 'Account not fully set up. Please reset your password.' };
+  }
+  if (!verifyPassword(password, profile.password_hash)) {
+    return { success: false, error: 'Invalid password.' };
   }
 
-  const cookieStore = await cookies();
-  cookieStore.set(COOKIE_NAME, profile.id, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    maxAge: 60 * 60 * 24 * 7, // 1 week
-    path: '/'
-  });
-
+  await setSessionCookie(profile.id);
   return { success: true };
 }
 
 /**
- * Sign up action. Creates a new profile, assigns a subscription, and pre-seeds a sales pipeline.
+ * Sign up with email, name, and password. Creates profile, subscription, pipeline.
  */
-export async function signUpAction(email: string, fullName: string): Promise<{ success: boolean; error?: string }> {
+export async function signUpAction(email: string, fullName: string, password: string): Promise<{ success: boolean; error?: string }> {
   if (!email || !email.includes('@')) {
     return { success: false, error: 'Please enter a valid email address.' };
   }
   if (!fullName || fullName.trim().length < 2) {
     return { success: false, error: 'Please enter a valid full name.' };
+  }
+  if (!password || password.length < 8) {
+    return { success: false, error: 'Password must be at least 8 characters.' };
   }
 
   const existing = await db.profiles.find(p => p.email.toLowerCase() === email.toLowerCase());
@@ -94,27 +159,24 @@ export async function signUpAction(email: string, fullName: string): Promise<{ s
     return { success: false, error: 'A profile with this email already exists. Please sign in.' };
   }
 
-  // Insert profile
   const newProfile = await db.profiles.insert({
     email: email.toLowerCase(),
     full_name: fullName,
+    password_hash: hashPassword(password),
   });
 
-  // Create free tier subscription
   await db.subscriptions.insert({
     user_id: newProfile.id,
     plan: 'free',
     status: 'active'
   });
 
-  // Create default pipeline for the new user
   const newPipeline = await db.pipelines.insert({
     user_id: newProfile.id,
     name: 'Sales Pipeline',
     is_default: true
   });
 
-  // Create stages for the pipeline
   const stages = [
     { name: 'Lead', order_index: 0, probability: 10, color: '#3b82f6' },
     { name: 'Contacted', order_index: 1, probability: 30, color: '#a855f7' },
@@ -134,20 +196,12 @@ export async function signUpAction(email: string, fullName: string): Promise<{ s
     });
   }
 
-  const cookieStore = await cookies();
-  cookieStore.set(COOKIE_NAME, newProfile.id, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    maxAge: 60 * 60 * 24 * 7, // 1 week
-    path: '/'
-  });
-
+  await setSessionCookie(newProfile.id);
   return { success: true };
 }
 
 /**
- * Sign out action. Clears the session cookie.
+ * Sign out. Clears session cookie.
  */
 export async function signOutAction(): Promise<{ success: boolean }> {
   const cookieStore = await cookies();
