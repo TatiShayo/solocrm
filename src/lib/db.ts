@@ -583,17 +583,27 @@ class TaskQueue {
 
 const dbQueue = new TaskQueue();
 
+// In-process read cache. All access is serialized through dbQueue, so this is
+// safe: reads reuse the last parsed snapshot instead of re-reading and
+// re-parsing the whole JSON file on every query (a read-heavy page previously
+// did one disk read + JSON.parse per table access — 5+ per render). Writes
+// refresh the cache with the just-persisted data, keeping it authoritative.
+let cachedDb: DatabaseSchema | null = null;
+
 async function readDbRaw(): Promise<DatabaseSchema> {
+  if (cachedDb) return cachedDb;
   try {
     await fs.mkdir(DB_DIR, { recursive: true });
     try {
       const data = await fs.readFile(DB_FILE, 'utf-8');
-      return JSON.parse(data) as DatabaseSchema;
+      cachedDb = JSON.parse(data) as DatabaseSchema;
+      return cachedDb;
     } catch (err: any) {
       if (err.code === 'ENOENT') {
         // File does not exist, write seed data
         await writeDbRaw(SEED_DATA);
-        return JSON.parse(JSON.stringify(SEED_DATA)) as DatabaseSchema;
+        cachedDb = JSON.parse(JSON.stringify(SEED_DATA)) as DatabaseSchema;
+        return cachedDb;
       }
       throw err;
     }
@@ -609,7 +619,9 @@ async function writeDbRaw(data: DatabaseSchema): Promise<void> {
     const tmpFile = `${DB_FILE}.tmp`;
     await fs.writeFile(tmpFile, JSON.stringify(data, null, 2), 'utf-8');
     await fs.rename(tmpFile, DB_FILE);
+    cachedDb = data; // keep the cache authoritative after a successful write
   } catch (err) {
+    cachedDb = null; // drop possibly-stale cache on write failure
     console.error('Failed to write database file:', err);
     throw err;
   }
@@ -711,6 +723,7 @@ export const db = {
   readRaw: () => dbQueue.enqueue(async () => readDbRaw()),
   writeRaw: (data: DatabaseSchema) => dbQueue.enqueue(async () => writeDbRaw(data)),
   reset: () => dbQueue.enqueue(async () => {
-    await writeDbRaw(SEED_DATA);
+    // Clone so seeded writes/inserts never mutate the shared SEED_DATA constant.
+    await writeDbRaw(JSON.parse(JSON.stringify(SEED_DATA)) as DatabaseSchema);
   })
 };

@@ -4,7 +4,7 @@
       "id": "default-user",
       "email": "solo@founder.com",
       "full_name": "Solo Founder",
-      "created_at": "2026-05-18T21:18:45.725Z"
+      "created_at": "2026-05-18T21:29:04.688Z"
     }
   ],
   "subscriptions": [
@@ -13,7 +13,7 @@
       "user_id": "default-user",
       "plan": "pro",
       "status": "active",
-      "created_at": "2026-05-18T21:18:45.725Z"
+      "created_at": "2026-05-18T21:29:04.692Z"
     }
   ],
   "pipelines": [
@@ -91,7 +91,7 @@
       ],
       "notes": "Interested in enterprise collaboration features.",
       "is_opted_out": false,
-      "created_at": "2026-06-17T21:18:45.725Z"
+      "created_at": "2026-06-17T21:29:04.693Z"
     },
     {
       "id": "contact-2",
@@ -109,7 +109,7 @@
       ],
       "notes": "Follow up in early July.",
       "is_opted_out": false,
-      "created_at": "2026-06-22T21:18:45.725Z"
+      "created_at": "2026-06-22T21:29:04.693Z"
     },
     {
       "id": "contact-3",
@@ -127,7 +127,7 @@
       ],
       "notes": "Referred by Sally. Looking for a custom plan.",
       "is_opted_out": false,
-      "created_at": "2026-06-27T21:18:45.725Z"
+      "created_at": "2026-06-27T21:29:04.693Z"
     },
     {
       "id": "contact-4",
@@ -145,7 +145,7 @@
       ],
       "notes": "High intent lead. Budget approved.",
       "is_opted_out": false,
-      "created_at": "2026-07-02T21:18:45.725Z"
+      "created_at": "2026-07-02T21:29:04.693Z"
     },
     {
       "id": "contact-5",
@@ -162,7 +162,7 @@
       ],
       "notes": "Signed up for trial.",
       "is_opted_out": false,
-      "created_at": "2026-07-05T21:18:45.725Z"
+      "created_at": "2026-07-05T21:29:04.693Z"
     },
     {
       "id": "contact-6",
@@ -179,7 +179,7 @@
       ],
       "notes": "Price-sensitive but interested.",
       "is_opted_out": false,
-      "created_at": "2026-07-07T21:18:45.725Z"
+      "created_at": "2026-07-07T21:29:04.693Z"
     },
     {
       "id": "contact-7",
@@ -197,7 +197,7 @@
       ],
       "notes": "Prefers email communication.",
       "is_opted_out": false,
-      "created_at": "2026-07-09T21:18:45.725Z"
+      "created_at": "2026-07-09T21:29:04.693Z"
     },
     {
       "id": "contact-8",
@@ -214,7 +214,7 @@
       ],
       "notes": "Inquired through web form.",
       "is_opted_out": true,
-      "created_at": "2026-07-10T21:18:45.725Z"
+      "created_at": "2026-07-10T21:29:04.693Z"
     },
     {
       "id": "contact-9",
@@ -231,7 +231,7 @@
       ],
       "notes": "Interested in chaos theory analytics.",
       "is_opted_out": false,
-      "created_at": "2026-07-12T21:18:45.725Z"
+      "created_at": "2026-07-12T21:29:04.693Z"
     },
     {
       "id": "contact-10",
@@ -248,7 +248,7 @@
       ],
       "notes": "Met at networking event.",
       "is_opted_out": false,
-      "created_at": "2026-07-13T21:18:45.725Z"
+      "created_at": "2026-07-13T21:29:04.693Z"
     },
     {
       "id": "contact-11",
@@ -266,7 +266,7 @@
       ],
       "notes": "Interested in CRM accounting sync.",
       "is_opted_out": false,
-      "created_at": "2026-07-15T21:18:45.725Z"
+      "created_at": "2026-07-15T21:29:04.693Z"
     },
     {
       "id": "contact-12",
@@ -283,10 +283,10 @@
       ],
       "notes": "Hard to reach.",
       "is_opted_out": false,
-      "created_at": "2026-07-16T21:18:45.725Z"
+      "created_at": "2026-07-16T21:29:04.693Z"
     },
     {
-      "id": "0b5333a6-ab5f-45d0-8059-9c4cc46bef7b",
+      "id": "daa2ee57-5ea3-4ba1-b19e-2ee5ab88088b",
       "created_at": "2026-06-30T07:00:00.000Z",
       "user_id": "default-user",
       "first_name": "Jane",
@@ -373,7 +373,7 @@
       "close_date": "2026-07-15",
       "probability": 100,
       "notes": "Expansion approved, contract signed!",
-      "won_at": "2026-07-15T21:18:45.726Z",
+      "won_at": "2026-07-15T21:29:04.693Z",
       "lost_at": null,
       "lost_reason": null
     },
@@ -389,7 +389,7 @@
       "probability": 0,
       "notes": "Decided to go with a cheaper competitor.",
       "won_at": null,
-      "lost_at": "2026-07-12T21:18:45.726Z",
+      "lost_at": "2026-07-12T21:29:04.693Z",
       "lost_reason": "Budget constraints, chose competitor."
     },
     {
@@ -429,76 +429,76 @@
       "deal_id": "deal-1",
       "event_type": "created",
       "description": "Deal was created for Acme CRM License.",
-      "created_at": "2026-06-17T21:18:45.726Z"
+      "created_at": "2026-06-17T21:29:04.694Z"
     },
     {
       "id": "dt-2",
       "deal_id": "deal-2",
       "event_type": "created",
       "description": "Deal was created for Globex Cloud Integration.",
-      "created_at": "2026-06-22T21:18:45.726Z"
+      "created_at": "2026-06-22T21:29:04.694Z"
     },
     {
       "id": "dt-3",
       "deal_id": "deal-3",
       "event_type": "created",
       "description": "Deal was created for Peanuts Custom Development.",
-      "created_at": "2026-06-27T21:18:45.726Z"
+      "created_at": "2026-06-27T21:29:04.694Z"
     },
     {
       "id": "dt-4",
       "deal_id": "deal-4",
       "event_type": "created",
       "description": "Deal was created for Themyscira Retainer.",
-      "created_at": "2026-07-02T21:18:45.726Z"
+      "created_at": "2026-07-02T21:29:04.694Z"
     },
     {
       "id": "dt-5",
       "deal_id": "deal-5",
       "event_type": "created",
       "description": "Deal was created for Hooli Expansion Deal.",
-      "created_at": "2026-07-05T21:18:45.726Z"
+      "created_at": "2026-07-05T21:29:04.694Z"
     },
     {
       "id": "dt-6",
       "deal_id": "deal-5",
       "event_type": "stage_change",
       "description": "Deal moved to Won.",
-      "created_at": "2026-07-15T21:18:45.726Z"
+      "created_at": "2026-07-15T21:29:04.694Z"
     },
     {
       "id": "dt-7",
       "deal_id": "deal-6",
       "event_type": "created",
       "description": "Deal was created for Southside Software Setup.",
-      "created_at": "2026-07-07T21:18:45.726Z"
+      "created_at": "2026-07-07T21:29:04.694Z"
     },
     {
       "id": "dt-8",
       "deal_id": "deal-6",
       "event_type": "stage_change",
       "description": "Deal was marked Lost. Reason: Budget constraints, chose competitor.",
-      "created_at": "2026-07-12T21:18:45.726Z"
+      "created_at": "2026-07-12T21:29:04.694Z"
     },
     {
       "id": "dt-9",
       "deal_id": "deal-7",
       "event_type": "created",
       "description": "Deal was created for Vandelay Latex Sales.",
-      "created_at": "2026-07-09T21:18:45.726Z"
+      "created_at": "2026-07-09T21:29:04.694Z"
     },
     {
       "id": "dt-10",
       "deal_id": "deal-8",
       "event_type": "created",
       "description": "Deal was created for InGen Analytics Suite.",
-      "created_at": "2026-07-12T21:18:45.726Z"
+      "created_at": "2026-07-12T21:29:04.694Z"
     }
   ],
   "tasks": [],
   "email_sequences": [
     {
-      "id": "786ec810-5260-4440-9cc2-c78804c37c69",
+      "id": "f15103f4-fdae-4bc4-999d-699fb1c1e62c",
       "created_at": "2026-06-30T07:00:00.000Z",
       "user_id": "default-user",
       "name": "Welcome Sequence",
@@ -507,9 +507,9 @@
   ],
   "sequence_steps": [
     {
-      "id": "9f144061-dc74-44ad-a7b2-fad0ca327f8e",
+      "id": "430b9e27-27eb-4a55-9fe9-82459fc4d117",
       "created_at": "2026-06-30T07:00:00.000Z",
-      "sequence_id": "786ec810-5260-4440-9cc2-c78804c37c69",
+      "sequence_id": "f15103f4-fdae-4bc4-999d-699fb1c1e62c",
       "step_number": 1,
       "delay_days": 3,
       "subject": "Welcome {{first_name}} to SoloCRM!",
@@ -518,10 +518,10 @@
   ],
   "sequence_enrollments": [
     {
-      "id": "e4bee2b4-349a-4d15-a863-90684de6ddba",
+      "id": "e4e506cc-0e4a-494b-baec-49688bcd04e6",
       "created_at": "2026-06-30T07:00:00.000Z",
-      "contact_id": "0b5333a6-ab5f-45d0-8059-9c4cc46bef7b",
-      "sequence_id": "786ec810-5260-4440-9cc2-c78804c37c69",
+      "contact_id": "daa2ee57-5ea3-4ba1-b19e-2ee5ab88088b",
+      "sequence_id": "f15103f4-fdae-4bc4-999d-699fb1c1e62c",
       "enrolled_at": "2026-06-30T07:00:00.000Z",
       "current_step": 1,
       "is_active": true
@@ -529,11 +529,11 @@
   ],
   "scheduled_emails": [
     {
-      "id": "4501a75c-0775-44e6-91f9-fb4f1b5b4946",
+      "id": "af0749ca-3990-41e0-868e-23117fcf9e93",
       "created_at": "2026-06-30T07:00:00.000Z",
-      "contact_id": "0b5333a6-ab5f-45d0-8059-9c4cc46bef7b",
-      "sequence_id": "786ec810-5260-4440-9cc2-c78804c37c69",
-      "step_id": "9f144061-dc74-44ad-a7b2-fad0ca327f8e",
+      "contact_id": "daa2ee57-5ea3-4ba1-b19e-2ee5ab88088b",
+      "sequence_id": "f15103f4-fdae-4bc4-999d-699fb1c1e62c",
+      "step_id": "430b9e27-27eb-4a55-9fe9-82459fc4d117",
       "scheduled_at": "2026-07-03T07:00:00.000Z",
       "sent_at": null,
       "subject": "Welcome Jane to SoloCRM!",
