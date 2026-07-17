@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Contact, Deal } from "@/lib/types";
+import { toCsv } from "@/lib/csv";
 import { Download } from "lucide-react";
 
 interface AnalyticsExportProps {
@@ -14,37 +15,25 @@ export default function AnalyticsExport({
   contacts,
 }: AnalyticsExportProps) {
   const handleExport = () => {
-    // In a real app, this might be a server-side generation for large datasets
-    const dealRows = [
-      [
-        "Deal ID",
-        "Title",
-        "Value",
-        "Status",
-        "Close Date",
-        "Contact ID",
-        "Contact Name",
-      ],
-      ...deals.map((d) =>
-        [
-          d.id,
-          d.title,
-          d.value,
-          d.status,
-          d.close_date,
-          d.contact_id,
-          d.contact?.name,
-        ].join(",")
-      ),
-    ];
-    const contactRows = [
+    // Values are escaped to prevent CSV/formula injection and delimiter breakout.
+    const dealsCsv = toCsv(
+      ["Deal ID", "Title", "Value", "Status", "Close Date", "Contact ID", "Contact Name"],
+      deals.map((d) => [
+        d.id,
+        d.title,
+        d.value,
+        d.status,
+        d.close_date,
+        d.contact_id,
+        d.contact?.name,
+      ])
+    );
+    const contactsCsv = toCsv(
       ["Contact ID", "Name", "Email", "Company", "Source"],
-      ...contacts.map((c) =>
-        [c.id, c.name, c.email, c.company, c.source].join(",")
-      ),
-    ];
+      contacts.map((c) => [c.id, c.name, c.email, c.company, c.source])
+    );
 
-    const csvContent = `DEALS\n${dealRows.join('\n')}\n\nCONTACTS\n${contactRows.join('\n')}`;
+    const csvContent = `DEALS\n${dealsCsv}\n\nCONTACTS\n${contactsCsv}`;
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");

@@ -25,7 +25,8 @@ export async function GET(request: Request) {
     .eq("due_date", tomorrowStr);
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("send-reminders error:", error);
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 
   if (!tasks || tasks.length === 0) {

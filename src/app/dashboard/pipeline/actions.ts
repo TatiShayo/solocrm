@@ -61,10 +61,12 @@ export async function deletePipeline(pipelineId: string) {
   const { error } = await supabase
     .from("pipelines")
     .delete()
-    .eq("id", pipelineId);
+    .eq("id", pipelineId)
+    .eq("user_id", user.id); // defense-in-depth in addition to RLS
 
   if (error) {
-    return { error: error.message };
+    console.error("deletePipeline error:", error);
+    return { error: "Failed to delete pipeline." };
   }
 
   revalidatePath("/dashboard/pipeline");
@@ -80,6 +82,19 @@ export async function updateStages(
   } = await supabase.auth.getUser();
 
   if (!user) redirect("/auth/login");
+
+  // Verify the pipeline belongs to the caller before touching its stages
+  // (defense-in-depth in addition to RLS on stages/pipelines).
+  const { data: ownedPipeline } = await supabase
+    .from("pipelines")
+    .select("id")
+    .eq("id", pipelineId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (!ownedPipeline) {
+    return { error: "Pipeline not found." };
+  }
 
   // Get existing stage IDs
   const { data: existing } = await supabase

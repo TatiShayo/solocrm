@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
     .select()
     .single();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) { console.error("contacts insert error:", error); return NextResponse.json({ error: "Failed to create contact" }, { status: 500 }); }
 
   await serviceSupabase.from("activity").insert({
     user_id: auth.userId,

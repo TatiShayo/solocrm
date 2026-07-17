@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     .select()
     .single();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) { console.error("Webhook operation failed:", error); return NextResponse.json({ error: "Webhook operation failed" }, { status: 500 }); }
 
   return NextResponse.json({ webhook });
 }
@@ -61,7 +61,7 @@ export async function DELETE(request: NextRequest) {
     .eq("id", id)
     .eq("user_id", user.id);
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) { console.error("Webhook operation failed:", error); return NextResponse.json({ error: "Webhook operation failed" }, { status: 500 }); }
 
   return NextResponse.json({ success: true });
 }

@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     .select("id, name, key, last_used_at, created_at")
     .single();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) { console.error("API key operation failed:", error); return NextResponse.json({ error: "API key operation failed" }, { status: 500 }); }
 
   return NextResponse.json({ key: apiKey }, { status: 201 });
 }
@@ -62,7 +62,7 @@ export async function DELETE(request: NextRequest) {
     .eq("id", id)
     .eq("user_id", user.id);
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) { console.error("API key operation failed:", error); return NextResponse.json({ error: "API key operation failed" }, { status: 500 }); }
 
   return NextResponse.json({ success: true });
 }

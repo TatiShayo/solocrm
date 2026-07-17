@@ -24,7 +24,8 @@ export async function GET(request: Request) {
     .order("user_id");
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("overdue-digest error:", error);
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 
   if (!overdueTasks || overdueTasks.length === 0) {
