@@ -1,12 +1,17 @@
 import { createHmac, timingSafeEqual } from 'crypto';
 
-const SECRET =
-  process.env.APP_SECRET ||
-  process.env.CRON_SECRET ||
-  'change-me-in-production-use-32-bytes-random';
+function getSecret(): string {
+  const secret = process.env.APP_SECRET || process.env.CRON_SECRET;
+  if (secret) return secret;
+  if (process.env.NODE_ENV === 'production') {
+    // Fail closed: with a known default secret anyone could forge tokens.
+    throw new Error('APP_SECRET (or CRON_SECRET) must be set in production');
+  }
+  return 'dev-only-unsubscribe-secret';
+}
 
 function sign(contactId: string): string {
-  return createHmac('sha256', SECRET).update(contactId).digest('hex');
+  return createHmac('sha256', getSecret()).update(contactId).digest('hex');
 }
 
 /**

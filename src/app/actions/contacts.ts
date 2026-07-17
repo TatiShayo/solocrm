@@ -2,6 +2,8 @@
 
 import { db, Contact, Deal, Task, SequenceEnrollment, ScheduledEmail } from '@/lib/db';
 import { requireUser } from '@/lib/auth';
+import { makeUnsubscribeToken, verifyUnsubscribeToken } from '@/lib/unsubscribe-token';
+import { rateLimit, clientIpFrom } from '@/lib/rate-limit';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 
@@ -492,8 +494,8 @@ export async function checkAndSendScheduledEmails() {
         continue;
       }
 
-      // Append unsubscribe link
-      const unsubscribeLink = `\n\n--\nTo unsubscribe, click here: ${appUrl}/unsubscribe?contactId=${contact.id}`;
+      // Append unsubscribe link (HMAC-signed token — raw contact IDs must never be exposed)
+      const unsubscribeLink = `\n\n--\nTo unsubscribe, click here: ${appUrl}/unsubscribe?token=${makeUnsubscribeToken(contact.id)}`;
       const emailBodyWithUnsubscribe = email.body + unsubscribeLink;
 
       // Mock sending email
@@ -582,11 +584,24 @@ export async function checkAndSendScheduledEmails() {
 }
 
 /**
- * Public action to unsubscribe a contact (without authentication check).
- * Verifies that the contact ID exists in the database.
+ * Public action to unsubscribe a contact.
+ * Requires a valid HMAC-signed unsubscribe token (minted server-side when the
+ * email was sent). Raw contact IDs are rejected — this prevents cross-tenant
+ * opt-out/enumeration of arbitrary contacts (IDOR).
  */
-export async function optOutContactPublicAction(contactId: string) {
+export async function optOutContactPublicAction(token: string) {
   try {
+    const ip = clientIpFrom(await headers());
+    const limited = rateLimit(`unsubscribe:${ip}`, 20, 60_000);
+    if (!limited.allowed) {
+      return { success: false, error: 'Too many requests. Please try again later.' };
+    }
+
+    const contactId = verifyUnsubscribeToken(token);
+    if (!contactId) {
+      return { success: false, error: 'Invalid or expired unsubscribe link.' };
+    }
+
     const contact = await db.contacts.findById(contactId);
     if (!contact) {
       return { success: false, error: 'Contact not found.' };
@@ -609,7 +624,8 @@ export async function optOutContactPublicAction(contactId: string) {
 
     revalidatePath(`/contacts/${contactId}`);
     return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message || 'Failed to unsubscribe.' };
+  } catch (error) {
+    console.error('optOutContactPublicAction error:', error);
+    return { success: false, error: 'Failed to unsubscribe.' };
   }
 }

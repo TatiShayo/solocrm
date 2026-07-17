@@ -5,7 +5,10 @@ import { db, Profile } from './db';
 
 const COOKIE_NAME = 'solocrm-session';
 const SESSION_SECRET = process.env.APP_SECRET || 'change-me-in-production-use-32-bytes-random';
-const DEMO_ENABLED = process.env.NODE_ENV === 'development' && !process.env.DISABLE_DEMO;
+// Demo fallback only outside production (dev + unit tests), never in prod.
+const DEMO_ENABLED =
+  (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') &&
+  !process.env.DISABLE_DEMO;
 
 function signSession(userId: string): string {
   const hmac = createHmac('sha256', SESSION_SECRET);

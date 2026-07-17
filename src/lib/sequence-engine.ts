@@ -1,11 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { sendEmail } from "./resend";
-import crypto from "crypto";
-
-function hashContactId(contactId: string) {
-  const salt = process.env.CRON_SECRET || "solocrm-unsubscribe";
-  return crypto.createHash("sha256").update(`${contactId}:${salt}`).digest("hex");
-}
+import { makeUnsubscribeToken } from "./unsubscribe-token";
 
 export function resolveMergeTags(
   text: string,
@@ -111,7 +106,7 @@ export async function processScheduledEmails() {
     const resolvedBody = resolveMergeTags(email.body, contact, deal);
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-    const token = hashContactId(contact.id);
+    const token = makeUnsubscribeToken(contact.id);
     const unsubscribeUrl = `${appUrl}/unsubscribe?token=${token}`;
 
     const html = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto">${resolvedBody.replace(/\n/g, "<br>")}<hr style="margin-top:32px;border:none;border-top:1px solid #e5e7eb"><p style="font-size:12px;color:#9ca3af">If you no longer wish to receive emails, <a href="${unsubscribeUrl}" style="color:#6b7280">unsubscribe</a>.</p></div>`;

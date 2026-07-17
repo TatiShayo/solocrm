@@ -5,11 +5,11 @@ import { optOutContactPublicAction } from '@/app/actions/contacts';
 import { MailCheck, MailX, Loader2 } from 'lucide-react';
 
 interface UnsubscribeFormProps {
-  contactId: string;
+  token: string;
   email: string | null;
 }
 
-export function UnsubscribeForm({ contactId, email }: UnsubscribeFormProps) {
+export function UnsubscribeForm({ token, email }: UnsubscribeFormProps) {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -18,14 +18,14 @@ export function UnsubscribeForm({ contactId, email }: UnsubscribeFormProps) {
     setLoading(true);
     setError(null);
     try {
-      const res = await optOutContactPublicAction(contactId);
+      const res = await optOutContactPublicAction(token);
       if (res.success) {
         setSuccess(true);
       } else {
         setError(res.error || 'Failed to unsubscribe.');
       }
-    } catch (err: any) {
-      setError(err.message || 'An error occurred.');
+    } catch {
+      setError('An error occurred.');
     } finally {
       setLoading(false);
     }

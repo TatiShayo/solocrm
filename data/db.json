@@ -4,7 +4,7 @@
       "id": "default-user",
       "email": "solo@founder.com",
       "full_name": "Solo Founder",
-      "created_at": "2026-05-16T15:34:58.208Z"
+      "created_at": "2026-05-18T20:58:29.120Z"
     }
   ],
   "subscriptions": [
@@ -13,7 +13,7 @@
       "user_id": "default-user",
       "plan": "pro",
       "status": "active",
-      "created_at": "2026-05-16T15:34:58.209Z"
+      "created_at": "2026-05-18T20:58:29.121Z"
     }
   ],
   "pipelines": [
@@ -91,7 +91,7 @@
       ],
       "notes": "Interested in enterprise collaboration features.",
       "is_opted_out": false,
-      "created_at": "2026-06-15T15:34:58.210Z"
+      "created_at": "2026-06-17T20:58:29.121Z"
     },
     {
       "id": "contact-2",
@@ -109,7 +109,7 @@
       ],
       "notes": "Follow up in early July.",
       "is_opted_out": false,
-      "created_at": "2026-06-20T15:34:58.210Z"
+      "created_at": "2026-06-22T20:58:29.121Z"
     },
     {
       "id": "contact-3",
@@ -127,7 +127,7 @@
       ],
       "notes": "Referred by Sally. Looking for a custom plan.",
       "is_opted_out": false,
-      "created_at": "2026-06-25T15:34:58.210Z"
+      "created_at": "2026-06-27T20:58:29.121Z"
     },
     {
       "id": "contact-4",
@@ -145,7 +145,7 @@
       ],
       "notes": "High intent lead. Budget approved.",
       "is_opted_out": false,
-      "created_at": "2026-06-30T15:34:58.210Z"
+      "created_at": "2026-07-02T20:58:29.121Z"
     },
     {
       "id": "contact-5",
@@ -162,7 +162,7 @@
       ],
       "notes": "Signed up for trial.",
       "is_opted_out": false,
-      "created_at": "2026-07-03T15:34:58.210Z"
+      "created_at": "2026-07-05T20:58:29.121Z"
     },
     {
       "id": "contact-6",
@@ -179,7 +179,7 @@
       ],
       "notes": "Price-sensitive but interested.",
       "is_opted_out": false,
-      "created_at": "2026-07-05T15:34:58.210Z"
+      "created_at": "2026-07-07T20:58:29.121Z"
     },
     {
       "id": "contact-7",
@@ -197,7 +197,7 @@
       ],
       "notes": "Prefers email communication.",
       "is_opted_out": false,
-      "created_at": "2026-07-07T15:34:58.210Z"
+      "created_at": "2026-07-09T20:58:29.121Z"
     },
     {
       "id": "contact-8",
@@ -214,7 +214,7 @@
       ],
       "notes": "Inquired through web form.",
       "is_opted_out": true,
-      "created_at": "2026-07-08T15:34:58.210Z"
+      "created_at": "2026-07-10T20:58:29.121Z"
     },
     {
       "id": "contact-9",
@@ -231,7 +231,7 @@
       ],
       "notes": "Interested in chaos theory analytics.",
       "is_opted_out": false,
-      "created_at": "2026-07-10T15:34:58.210Z"
+      "created_at": "2026-07-12T20:58:29.121Z"
     },
     {
       "id": "contact-10",
@@ -248,7 +248,7 @@
       ],
       "notes": "Met at networking event.",
       "is_opted_out": false,
-      "created_at": "2026-07-11T15:34:58.210Z"
+      "created_at": "2026-07-13T20:58:29.121Z"
     },
     {
       "id": "contact-11",
@@ -266,7 +266,7 @@
       ],
       "notes": "Interested in CRM accounting sync.",
       "is_opted_out": false,
-      "created_at": "2026-07-13T15:34:58.210Z"
+      "created_at": "2026-07-15T20:58:29.121Z"
     },
     {
       "id": "contact-12",
@@ -283,21 +283,24 @@
       ],
       "notes": "Hard to reach.",
       "is_opted_out": false,
-      "created_at": "2026-07-14T15:34:58.210Z"
+      "created_at": "2026-07-16T20:58:29.121Z"
     },
     {
-      "id": "cff67b44-e890-416d-89f4-931c96679cb7",
+      "id": "37680979-8b50-4edd-a35f-e7cff3bf741e",
       "created_at": "2026-06-30T07:00:00.000Z",
       "user_id": "default-user",
-      "first_name": "Jane",
-      "last_name": "Doe",
-      "email": "jane@example.com",
-      "phone": null,
-      "company": "Testing Corp",
-      "title": "QA Lead",
-      "source": "Test Suite",
-      "tags": [],
-      "notes": null,
+      "first_name": "Peter",
+      "last_name": "Parker",
+      "email": "peter.parker@dailybugle.com",
+      "phone": "555-0900",
+      "company": "Daily Bugle",
+      "title": "Photographer",
+      "source": "Manual",
+      "tags": [
+        "Press",
+        "VIP"
+      ],
+      "notes": "Spider-man candidate?",
       "is_opted_out": false
     }
   ],
@@ -310,7 +313,7 @@
       "stage_id": "stage-lead",
       "title": "Acme CRM License",
       "value": 1500,
-      "close_date": "2026-08-14",
+      "close_date": "2026-08-16",
       "probability": 10,
       "notes": "Initial outreach regarding CRM licenses.",
       "won_at": null,
@@ -325,7 +328,7 @@
       "stage_id": "stage-contacted",
       "title": "Globex Cloud Integration",
       "value": 4500,
-      "close_date": "2026-08-29",
+      "close_date": "2026-08-31",
       "probability": 30,
       "notes": "Sent introductory demo links.",
       "won_at": null,
@@ -340,7 +343,7 @@
       "stage_id": "stage-proposal",
       "title": "Peanuts Custom Development",
       "value": 8000,
-      "close_date": "2026-07-30",
+      "close_date": "2026-08-01",
       "probability": 60,
       "notes": "Proposal sent. Waiting on approval.",
       "won_at": null,
@@ -355,7 +358,7 @@
       "stage_id": "stage-negotiation",
       "title": "Themyscira Retainer",
       "value": 12000,
-      "close_date": "2026-07-25",
+      "close_date": "2026-07-27",
       "probability": 80,
       "notes": "Negotiating discount terms.",
       "won_at": null,
@@ -370,10 +373,10 @@
       "stage_id": "stage-won",
       "title": "Hooli Expansion Deal",
       "value": 20000,
-      "close_date": "2026-07-13",
+      "close_date": "2026-07-15",
       "probability": 100,
       "notes": "Expansion approved, contract signed!",
-      "won_at": "2026-07-13T15:34:58.210Z",
+      "won_at": "2026-07-15T20:58:29.121Z",
       "lost_at": null,
       "lost_reason": null
     },
@@ -385,11 +388,11 @@
       "stage_id": "stage-lost",
       "title": "Southside Software Setup",
       "value": 3000,
-      "close_date": "2026-07-10",
+      "close_date": "2026-07-12",
       "probability": 0,
       "notes": "Decided to go with a cheaper competitor.",
       "won_at": null,
-      "lost_at": "2026-07-10T15:34:58.210Z",
+      "lost_at": "2026-07-12T20:58:29.121Z",
       "lost_reason": "Budget constraints, chose competitor."
     },
     {
@@ -400,7 +403,7 @@
       "stage_id": "stage-lead",
       "title": "Vandelay Latex Sales",
       "value": 2500,
-      "close_date": "2026-09-13",
+      "close_date": "2026-09-15",
       "probability": 10,
       "notes": "Warm referral. Need to follow up.",
       "won_at": null,
@@ -415,10 +418,26 @@
       "stage_id": "stage-proposal",
       "title": "InGen Analytics Suite",
       "value": 15000,
-      "close_date": "2026-08-04",
+      "close_date": "2026-08-06",
       "probability": 60,
       "notes": "Analytics suite proposal submitted.",
       "won_at": null,
+      "lost_at": null,
+      "lost_reason": null
+    },
+    {
+      "id": "4320c3c2-740c-4d06-b0db-2f287a5c79cb",
+      "created_at": "2026-06-30T07:00:00.000Z",
+      "user_id": "default-user",
+      "contact_id": "37680979-8b50-4edd-a35f-e7cff3bf741e",
+      "pipeline_id": "pipeline-sales",
+      "stage_id": "stage-won",
+      "title": "Bugle Front Page Photo",
+      "value": 500,
+      "close_date": null,
+      "probability": 100,
+      "notes": null,
+      "won_at": "2026-06-30T07:00:00.000Z",
       "lost_at": null,
       "lost_reason": null
     }
@@ -429,93 +448,169 @@
       "deal_id": "deal-1",
       "event_type": "created",
       "description": "Deal was created for Acme CRM License.",
-      "created_at": "2026-06-15T15:34:58.210Z"
+      "created_at": "2026-06-17T20:58:29.121Z"
     },
     {
       "id": "dt-2",
       "deal_id": "deal-2",
       "event_type": "created",
       "description": "Deal was created for Globex Cloud Integration.",
-      "created_at": "2026-06-20T15:34:58.210Z"
+      "created_at": "2026-06-22T20:58:29.121Z"
     },
     {
       "id": "dt-3",
       "deal_id": "deal-3",
       "event_type": "created",
       "description": "Deal was created for Peanuts Custom Development.",
-      "created_at": "2026-06-25T15:34:58.210Z"
+      "created_at": "2026-06-27T20:58:29.121Z"
     },
     {
       "id": "dt-4",
       "deal_id": "deal-4",
       "event_type": "created",
       "description": "Deal was created for Themyscira Retainer.",
-      "created_at": "2026-06-30T15:34:58.210Z"
+      "created_at": "2026-07-02T20:58:29.121Z"
     },
     {
       "id": "dt-5",
       "deal_id": "deal-5",
       "event_type": "created",
       "description": "Deal was created for Hooli Expansion Deal.",
-      "created_at": "2026-07-03T15:34:58.210Z"
+      "created_at": "2026-07-05T20:58:29.121Z"
     },
     {
       "id": "dt-6",
       "deal_id": "deal-5",
       "event_type": "stage_change",
       "description": "Deal moved to Won.",
-      "created_at": "2026-07-13T15:34:58.210Z"
+      "created_at": "2026-07-15T20:58:29.121Z"
     },
     {
       "id": "dt-7",
       "deal_id": "deal-6",
       "event_type": "created",
       "description": "Deal was created for Southside Software Setup.",
-      "created_at": "2026-07-05T15:34:58.210Z"
+      "created_at": "2026-07-07T20:58:29.121Z"
     },
     {
       "id": "dt-8",
       "deal_id": "deal-6",
       "event_type": "stage_change",
       "description": "Deal was marked Lost. Reason: Budget constraints, chose competitor.",
-      "created_at": "2026-07-10T15:34:58.210Z"
+      "created_at": "2026-07-12T20:58:29.121Z"
     },
     {
       "id": "dt-9",
       "deal_id": "deal-7",
       "event_type": "created",
       "description": "Deal was created for Vandelay Latex Sales.",
-      "created_at": "2026-07-07T15:34:58.210Z"
+      "created_at": "2026-07-09T20:58:29.121Z"
     },
     {
       "id": "dt-10",
       "deal_id": "deal-8",
       "event_type": "created",
       "description": "Deal was created for InGen Analytics Suite.",
-      "created_at": "2026-07-10T15:34:58.210Z"
+      "created_at": "2026-07-12T20:58:29.121Z"
+    },
+    {
+      "id": "72b16c57-3b11-4195-9b18-ecac694e155c",
+      "created_at": "2026-06-30T07:00:00.000Z",
+      "deal_id": "4320c3c2-740c-4d06-b0db-2f287a5c79cb",
+      "event_type": "created",
+      "description": "Deal was created for Bugle Front Page Photo."
+    },
+    {
+      "id": "63dddc9f-6689-4fe0-ac46-ddc2524832bf",
+      "created_at": "2026-06-30T07:00:00.000Z",
+      "deal_id": "4320c3c2-740c-4d06-b0db-2f287a5c79cb",
+      "event_type": "stage_change",
+      "description": "Deal stage updated to Contacted."
+    },
+    {
+      "id": "c2fa4b5f-b614-4655-a6b1-43eff9002820",
+      "created_at": "2026-06-30T07:00:00.000Z",
+      "deal_id": "4320c3c2-740c-4d06-b0db-2f287a5c79cb",
+      "event_type": "stage_change",
+      "description": "Deal was marked Won."
     }
   ],
-  "tasks": [],
-  "email_sequences": [
+  "tasks": [
     {
-      "id": "de6ddd1e-bd6b-405b-8c4e-4818be3639a0",
+      "id": "34801987-7a9e-4bd5-a950-41869ac450a3",
       "created_at": "2026-06-30T07:00:00.000Z",
       "user_id": "default-user",
-      "name": "Welcome Sequence",
+      "contact_id": "37680979-8b50-4edd-a35f-e7cff3bf741e",
+      "deal_id": null,
+      "title": "Call J. Jonah Jameson",
+      "due_date": null,
+      "type": "call",
+      "is_complete": true,
+      "completed_at": "2026-06-30T07:00:00.000Z"
+    }
+  ],
+  "email_sequences": [
+    {
+      "id": "9b82d1b3-ae9c-4060-9840-c25c1be6e44d",
+      "created_at": "2026-06-30T07:00:00.000Z",
+      "user_id": "default-user",
+      "name": "Nurture Sequence",
       "is_active": true
     }
   ],
   "sequence_steps": [
     {
-      "id": "a9f6d3d0-ccd7-4389-ae01-935956defe89",
+      "id": "cd8474c9-fdd6-4aa9-8d5f-6a4bca2c4ab2",
       "created_at": "2026-06-30T07:00:00.000Z",
-      "sequence_id": "de6ddd1e-bd6b-405b-8c4e-4818be3639a0",
+      "sequence_id": "9b82d1b3-ae9c-4060-9840-c25c1be6e44d",
       "step_number": 1,
-      "delay_days": 3,
-      "subject": "Welcome {{first_name}} to SoloCRM!",
-      "body": "Hello {{first_name}} {{last_name}}, we are glad to have you at {{company}}."
+      "delay_days": 0,
+      "subject": "Hey {{first_name}}, deal is won!",
+      "body": "Thanks for sending photos from {{company}}."
+    },
+    {
+      "id": "9fc2b266-be1c-4443-bb22-cde9164039fc",
+      "created_at": "2026-06-30T07:00:00.000Z",
+      "sequence_id": "9b82d1b3-ae9c-4060-9840-c25c1be6e44d",
+      "step_number": 2,
+      "delay_days": 2,
+      "subject": "Follow-up {{first_name}}",
+      "body": "Do you have more photos?"
     }
   ],
-  "sequence_enrollments": [],
-  "scheduled_emails": []
+  "sequence_enrollments": [
+    {
+      "id": "f683ff7c-b408-43c1-992d-0729ab09ebe3",
+      "created_at": "2026-06-30T07:00:00.000Z",
+      "contact_id": "37680979-8b50-4edd-a35f-e7cff3bf741e",
+      "sequence_id": "9b82d1b3-ae9c-4060-9840-c25c1be6e44d",
+      "enrolled_at": "2026-06-30T07:00:00.000Z",
+      "current_step": 2,
+      "is_active": false
+    }
+  ],
+  "scheduled_emails": [
+    {
+      "id": "3a80e754-1aa2-4257-abb4-ac4bc35b4c5a",
+      "created_at": "2026-06-30T07:00:00.000Z",
+      "contact_id": "37680979-8b50-4edd-a35f-e7cff3bf741e",
+      "sequence_id": "9b82d1b3-ae9c-4060-9840-c25c1be6e44d",
+      "step_id": "cd8474c9-fdd6-4aa9-8d5f-6a4bca2c4ab2",
+      "scheduled_at": "2026-06-30T07:00:00.000Z",
+      "sent_at": "2026-06-30T07:00:00.000Z",
+      "subject": "Hey Peter, deal is won!",
+      "body": "Thanks for sending photos from Daily Bugle."
+    },
+    {
+      "id": "c4d64adf-310b-400d-b22f-2097c6fd1afe",
+      "created_at": "2026-06-30T07:00:00.000Z",
+      "contact_id": "37680979-8b50-4edd-a35f-e7cff3bf741e",
+      "sequence_id": "9b82d1b3-ae9c-4060-9840-c25c1be6e44d",
+      "step_id": "9fc2b266-be1c-4443-bb22-cde9164039fc",
+      "scheduled_at": "2026-07-02T07:00:00.000Z",
+      "sent_at": "2026-07-02T07:00:00.000Z",
+      "subject": "Follow-up Peter",
+      "body": "Do you have more photos?"
+    }
+  ]
 }
