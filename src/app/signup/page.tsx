@@ -30,7 +30,7 @@ export default function SignupPage() {
         setError(res.error || 'Failed to create an account.');
         setLoading(false);
       }
-    } catch (err: any) {
+    } catch {
       setError('An unexpected error occurred. Please try again.');
       setLoading(false);
     }

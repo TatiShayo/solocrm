@@ -29,7 +29,7 @@ export default function LoginPage() {
         setError(res.error || 'Failed to sign in. Please verify your email.');
         setLoading(false);
       }
-    } catch (err: any) {
+    } catch {
       setError('An unexpected error occurred. Please try again.');
       setLoading(false);
     }
@@ -126,7 +126,7 @@ export default function LoginPage() {
 
         <div className="mt-8 pt-6 border-t border-[#1a2e30] text-center">
           <p className="text-sm text-neutral-400">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link href="/signup" className="text-[#06b6d4] hover:underline font-medium">
               Create an account
             </Link>

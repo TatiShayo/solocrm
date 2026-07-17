@@ -113,7 +113,8 @@ export async function requireUser(): Promise<Profile> {
 
 /** Removes sensitive fields before sending a profile to the client. */
 export function sanitizeProfile(profile: Profile): Omit<Profile, 'password_hash'> {
-  const { password_hash: _password_hash, ...safe } = profile;
+  const safe = { ...profile };
+  delete safe.password_hash;
   return safe;
 }
 
