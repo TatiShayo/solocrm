@@ -4,24 +4,25 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { registerAction } from '@/app/actions/auth';
-import { ArrowRight, Loader2, Mail, User } from 'lucide-react';
+import { ArrowRight, Loader2, Lock, Mail, User } from 'lucide-react';
 
 export default function SignupPage() {
   const router = useRouter();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !fullName) return;
+    if (!email || !fullName || !password) return;
 
     setLoading(true);
     setError(null);
 
     try {
-      const res = await registerAction(email, fullName);
+      const res = await registerAction(email, fullName, password);
       if (res.success) {
         router.push('/dashboard');
         router.refresh();
@@ -99,6 +100,29 @@ export default function SignupPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
+                className="w-full bg-[#09100f] border border-[#1a2e30] focus:border-[#06b6d4] rounded-xl py-3 pl-11 pr-4 text-white text-sm placeholder-neutral-600 outline-none transition-colors"
+                disabled={loading}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-neutral-300 mb-2">
+              Password
+            </label>
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-neutral-500">
+                <Lock className="w-5 h-5" />
+              </span>
+              <input
+                id="password"
+                type="password"
+                required
+                minLength={8}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="At least 8 characters"
+                autoComplete="new-password"
                 className="w-full bg-[#09100f] border border-[#1a2e30] focus:border-[#06b6d4] rounded-xl py-3 pl-11 pr-4 text-white text-sm placeholder-neutral-600 outline-none transition-colors"
                 disabled={loading}
               />

@@ -1,7 +1,7 @@
 'use server';
 
 import { db, Deal } from '@/lib/db';
-import { getCurrentUser } from '@/lib/auth';
+import { requireUser } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
 import { generateDealSummary, suggestNextStep, generateEmailDraft } from '@/lib/ai';
 
@@ -10,7 +10,7 @@ import { generateDealSummary, suggestNextStep, generateEmailDraft } from '@/lib/
  * Appends a history event to the timeline and revalidates paths.
  */
 export async function updateDealStage(dealId: string, newStageId: string) {
-  const user = await getCurrentUser();
+  const user = await requireUser();
 
   try {
     const deal = await db.deals.findById(dealId);
@@ -90,7 +90,7 @@ export async function updateDealDetails(
     stage_id: string;
   }
 ) {
-  const user = await getCurrentUser();
+  const user = await requireUser();
 
   try {
     const deal = await db.deals.findById(dealId);
@@ -167,7 +167,7 @@ export async function updateDealDetails(
  * Marks a deal as Won.
  */
 export async function markDealWon(dealId: string) {
-  const user = await getCurrentUser();
+  const user = await requireUser();
 
   try {
     const deal = await db.deals.findById(dealId);
@@ -210,7 +210,7 @@ export async function markDealWon(dealId: string) {
  * Marks a deal as Lost with a reason.
  */
 export async function markDealLost(dealId: string, lostReason: string) {
-  const user = await getCurrentUser();
+  const user = await requireUser();
 
   try {
     const deal = await db.deals.findById(dealId);
@@ -253,7 +253,7 @@ export async function markDealLost(dealId: string, lostReason: string) {
  * Deletes a deal entirely.
  */
 export async function deleteDeal(dealId: string) {
-  const user = await getCurrentUser();
+  const user = await requireUser();
 
   try {
     const deal = await db.deals.findById(dealId);
@@ -285,7 +285,7 @@ export async function deleteDeal(dealId: string) {
  * Server Action wrapper to get AI deal status summary.
  */
 export async function getAISummaryAction(dealId: string) {
-  const user = await getCurrentUser();
+  const user = await requireUser();
   const deal = await db.deals.findById(dealId);
   if (!deal || deal.user_id !== user.id) {
     throw new Error('Unauthorized');
@@ -297,7 +297,7 @@ export async function getAISummaryAction(dealId: string) {
  * Server Action wrapper to get AI deal next step recommendation.
  */
 export async function getAINextStepAction(dealId: string) {
-  const user = await getCurrentUser();
+  const user = await requireUser();
   const deal = await db.deals.findById(dealId);
   if (!deal || deal.user_id !== user.id) {
     throw new Error('Unauthorized');
@@ -309,7 +309,7 @@ export async function getAINextStepAction(dealId: string) {
  * Server Action wrapper to generate email draft.
  */
 export async function generateEmailDraftAction(contactId: string, prompt: string) {
-  const user = await getCurrentUser();
+  const user = await requireUser();
   const contact = await db.contacts.findById(contactId);
   if (!contact || contact.user_id !== user.id) {
     throw new Error('Unauthorized');
@@ -328,7 +328,7 @@ export async function createDeal(data: {
   close_date?: string;
   notes?: string;
 }) {
-  const user = await getCurrentUser();
+  const user = await requireUser();
   try {
     if (data.contact_id) {
       const contact = await db.contacts.findById(data.contact_id);

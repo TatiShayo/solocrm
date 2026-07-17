@@ -1,12 +1,12 @@
 import React from 'react';
 import { db } from '@/lib/db';
-import { getCurrentUser } from '@/lib/auth';
+import { requireUser } from '@/lib/auth';
 import TasksClient from './tasks-client';
 
 export const dynamic = 'force-dynamic';
 
 export default async function TasksPage() {
-  const user = await getCurrentUser();
+  const user = await requireUser();
 
   // Fetch tasks and contacts
   const [tasks, contacts] = await Promise.all([

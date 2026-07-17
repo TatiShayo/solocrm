@@ -9,6 +9,17 @@ export function validateBody<T extends z.ZodType>(body: unknown, schema: T): z.i
   return result.data;
 }
 
+export const signInSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+});
+
+export const signUpSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+  fullName: z.string().trim().min(2, "Please enter a valid full name").max(200),
+  password: z.string().min(8, "Password must be at least 8 characters").max(1024),
+});
+
 export const dealIdSchema = z.object({
   dealId: z.string().uuid("Invalid deal ID"),
 });

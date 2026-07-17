@@ -1,4 +1,5 @@
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { createHmac, scryptSync, timingSafeEqual, randomBytes } from 'crypto';
 import { db, Profile } from './db';
 
@@ -49,8 +50,8 @@ function verifyPassword(password: string, stored: string): boolean {
   }
 }
 
-function setSessionCookie(userId: string) {
-  const cookieStore = cookies();
+async function setSessionCookie(userId: string) {
+  const cookieStore = await cookies();
   return cookieStore.set(COOKIE_NAME, signSession(userId), {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
@@ -93,6 +94,24 @@ export async function getCurrentUser(): Promise<Profile | null> {
   }
 
   return null;
+}
+
+/**
+ * Returns the authenticated user or redirects to /login.
+ * Use in server components / server actions that require auth.
+ */
+export async function requireUser(): Promise<Profile> {
+  const user = await getCurrentUser();
+  if (!user) {
+    redirect('/login');
+  }
+  return user;
+}
+
+/** Removes sensitive fields before sending a profile to the client. */
+export function sanitizeProfile(profile: Profile): Omit<Profile, 'password_hash'> {
+  const { password_hash: _password_hash, ...safe } = profile;
+  return safe;
 }
 
 /**

@@ -1,12 +1,12 @@
 import React from 'react';
 import { db } from '@/lib/db';
-import { getCurrentUser } from '@/lib/auth';
+import { requireUser } from '@/lib/auth';
 import ContactsClient from './contacts-client';
 
 export const dynamic = 'force-dynamic';
 
 export default async function ContactsPage() {
-  const user = await getCurrentUser();
+  const user = await requireUser();
   
   // Load contacts and deals for the authenticated user
   const contacts = await db.contacts.list(c => c.user_id === user.id);

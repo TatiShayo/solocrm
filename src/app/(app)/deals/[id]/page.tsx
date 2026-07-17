@@ -1,7 +1,7 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
-import { getCurrentUser } from '@/lib/auth';
+import { requireUser } from '@/lib/auth';
 import DealDetailClient from './deal-detail-client';
 
 export const dynamic = 'force-dynamic';
@@ -11,7 +11,7 @@ interface PageProps {
 }
 
 export default async function DealDetailPage({ params }: PageProps) {
-  const user = await getCurrentUser();
+  const user = await requireUser();
   const { id } = await params;
 
   // Retrieve deal

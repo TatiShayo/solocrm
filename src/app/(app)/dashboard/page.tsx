@@ -13,13 +13,13 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { db } from '@/lib/db';
-import { getCurrentUser } from '@/lib/auth';
+import { requireUser } from '@/lib/auth';
 import { checkAndSendScheduledEmails } from '@/app/actions/contacts';
 
 export const dynamic = 'force-dynamic';
 
 export default async function DashboardPage() {
-  const user = await getCurrentUser();
+  const user = await requireUser();
 
   // 1. Run background check for scheduled emails that are due
   const emailCheck = await checkAndSendScheduledEmails();

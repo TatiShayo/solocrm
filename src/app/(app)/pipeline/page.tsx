@@ -1,12 +1,12 @@
 import React from 'react';
 import { db } from '@/lib/db';
-import { getCurrentUser } from '@/lib/auth';
+import { requireUser } from '@/lib/auth';
 import PipelineClient from './pipeline-client';
 
 export const dynamic = 'force-dynamic';
 
 export default async function PipelinePage() {
-  const user = await getCurrentUser();
+  const user = await requireUser();
 
   // Fetch data
   const [deals, stages, contacts, tasks, timelineEvents] = await Promise.all([

@@ -4,23 +4,24 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { loginAction } from '@/app/actions/auth';
-import { ArrowRight, Loader2, Mail } from 'lucide-react';
+import { ArrowRight, Loader2, Lock, Mail } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email || !password) return;
 
     setLoading(true);
     setError(null);
 
     try {
-      const res = await loginAction(email);
+      const res = await loginAction(email, password);
       if (res.success) {
         router.push('/dashboard');
         router.refresh();
@@ -81,9 +82,29 @@ export default function LoginPage() {
                 disabled={loading}
               />
             </div>
-            <p className="text-xs text-neutral-500 mt-2">
-              For testing, you can use the default profile: <code className="text-[#06b6d4]">solo@founder.com</code>
-            </p>
+          </div>
+
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-neutral-300 mb-2">
+              Password
+            </label>
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-neutral-500">
+                <Lock className="w-5 h-5" />
+              </span>
+              <input
+                id="password"
+                type="password"
+                required
+                minLength={8}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                autoComplete="current-password"
+                className="w-full bg-[#09100f] border border-[#1a2e30] focus:border-[#06b6d4] rounded-xl py-3 pl-11 pr-4 text-white text-sm placeholder-neutral-600 outline-none transition-colors"
+                disabled={loading}
+              />
+            </div>
           </div>
 
           <button

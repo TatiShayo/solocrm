@@ -1,7 +1,7 @@
 'use server';
 
 import { db, Contact, Deal, Task, SequenceEnrollment, ScheduledEmail } from '@/lib/db';
-import { getCurrentUser } from '@/lib/auth';
+import { requireUser } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 
@@ -38,7 +38,7 @@ export async function createContact(data: {
   tags: string[];
   notes: string | null;
 }) {
-  const user = await getCurrentUser();
+  const user = await requireUser();
 
   if (data.email) {
     const existing = await db.contacts.find(
@@ -74,7 +74,7 @@ export async function createContact(data: {
  * Updates an existing contact.
  */
 export async function updateContact(id: string, data: Partial<Contact>) {
-  const user = await getCurrentUser();
+  const user = await requireUser();
   try {
     const contact = await db.contacts.findById(id);
     if (!contact || contact.user_id !== user.id) {
@@ -93,7 +93,7 @@ export async function updateContact(id: string, data: Partial<Contact>) {
  * Deletes a contact.
  */
 export async function deleteContact(id: string) {
-  const user = await getCurrentUser();
+  const user = await requireUser();
   try {
     const contact = await db.contacts.findById(id);
     if (!contact || contact.user_id !== user.id) {
@@ -141,7 +141,7 @@ export async function bulkInsertContacts(contactsList: Array<{
   tags: string[];
   notes: string | null;
 }>) {
-  const user = await getCurrentUser();
+  const user = await requireUser();
 
   try {
     const inserted = [];
@@ -193,7 +193,7 @@ export async function createDealForContact(data: {
   close_date?: string;
   notes?: string;
 }) {
-  const user = await getCurrentUser();
+  const user = await requireUser();
   try {
     const contact = await db.contacts.findById(data.contact_id);
     if (!contact || contact.user_id !== user.id) {
@@ -256,7 +256,7 @@ export async function addTaskForContact(data: {
   due_date?: string;
   type?: string;
 }) {
-  const user = await getCurrentUser();
+  const user = await requireUser();
   try {
     const contact = await db.contacts.findById(data.contact_id);
     if (!contact || contact.user_id !== user.id) {
@@ -285,7 +285,7 @@ export async function addTaskForContact(data: {
  * Toggles completion status of a task.
  */
 export async function toggleTaskComplete(taskId: string, isComplete: boolean) {
-  const user = await getCurrentUser();
+  const user = await requireUser();
   try {
     const task = await db.tasks.findById(taskId);
     if (!task) {
@@ -328,7 +328,7 @@ export async function createTask(data: {
   due_date: string | null;
   type: string;
 }) {
-  const user = await getCurrentUser();
+  const user = await requireUser();
   try {
     if (data.contact_id) {
       const contact = await db.contacts.findById(data.contact_id);
@@ -363,7 +363,7 @@ export async function createTask(data: {
  * Enrolls a contact in a sequence.
  */
 export async function enrollInSequence(contactId: string, sequenceId: string) {
-  const user = await getCurrentUser();
+  const user = await requireUser();
   try {
     const contact = await db.contacts.findById(contactId);
     if (!contact || contact.user_id !== user.id) throw new Error('Contact not found or unauthorized.');
@@ -420,7 +420,7 @@ export async function enrollInSequence(contactId: string, sequenceId: string) {
  * Opts a contact in or out.
  */
 export async function optOutContact(contactId: string, isOptedOut: boolean) {
-  const user = await getCurrentUser();
+  const user = await requireUser();
   try {
     const contact = await db.contacts.findById(contactId);
     if (!contact || contact.user_id !== user.id) {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
-import { getCurrentUser } from '@/lib/auth';
+import { requireUser } from '@/lib/auth';
 import ContactDetailClient from './contact-detail-client';
 
 export const dynamic = 'force-dynamic';
@@ -19,7 +19,7 @@ interface TimelineEvent {
 }
 
 export default async function ContactDetailPage({ params }: PageProps) {
-  const user = await getCurrentUser();
+  const user = await requireUser();
   const { id } = await params;
 
   // Retrieve contact, verifying it belongs to current user

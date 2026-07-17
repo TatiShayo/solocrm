@@ -11,6 +11,8 @@ export interface Profile {
   id: string;
   email: string;
   full_name: string | null;
+  /** scrypt hash — never expose to clients. */
+  password_hash?: string | null;
   created_at: string;
 }
 

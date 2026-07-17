@@ -1,5 +1,5 @@
 import React from 'react';
-import { getCurrentUser } from '@/lib/auth';
+import { requireUser } from '@/lib/auth';
 import NavigationSidebar from './navigation-sidebar';
 
 export const metadata = {
@@ -12,7 +12,7 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getCurrentUser();
+  const user = await requireUser();
 
   return (
     <div className="min-h-screen bg-[#09100f] text-neutral-100 flex flex-col md:flex-row">

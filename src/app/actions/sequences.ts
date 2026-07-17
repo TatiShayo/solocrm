@@ -1,14 +1,14 @@
 'use server';
 
 import { db } from '@/lib/db';
-import { getCurrentUser } from '@/lib/auth';
+import { requireUser } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
 
 /**
  * Creates a new email sequence.
  */
 export async function createSequence(name: string) {
-  const user = await getCurrentUser();
+  const user = await requireUser();
   try {
     const seq = await db.emailSequences.insert({
       user_id: user.id,
@@ -26,7 +26,7 @@ export async function createSequence(name: string) {
  * Toggles a sequence active status.
  */
 export async function updateSequenceStatus(sequenceId: string, isActive: boolean) {
-  const user = await getCurrentUser();
+  const user = await requireUser();
   try {
     const seq = await db.emailSequences.findById(sequenceId);
     if (!seq || seq.user_id !== user.id) {
@@ -44,7 +44,7 @@ export async function updateSequenceStatus(sequenceId: string, isActive: boolean
  * Deletes a sequence and all associated steps and enrollments.
  */
 export async function deleteSequence(sequenceId: string) {
-  const user = await getCurrentUser();
+  const user = await requireUser();
   try {
     const seq = await db.emailSequences.findById(sequenceId);
     if (!seq || seq.user_id !== user.id) {
@@ -84,7 +84,7 @@ export async function addSequenceStep(
   sequenceId: string,
   data: { subject: string; body: string; delay_days: number }
 ) {
-  const user = await getCurrentUser();
+  const user = await requireUser();
   try {
     const seq = await db.emailSequences.findById(sequenceId);
     if (!seq || seq.user_id !== user.id) {
@@ -113,7 +113,7 @@ export async function addSequenceStep(
  * Deletes a sequence step and re-numbers remaining steps.
  */
 export async function deleteSequenceStep(sequenceId: string, stepId: string) {
-  const user = await getCurrentUser();
+  const user = await requireUser();
   try {
     const seq = await db.emailSequences.findById(sequenceId);
     if (!seq || seq.user_id !== user.id) {

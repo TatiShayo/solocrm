@@ -60,20 +60,19 @@ export default async function AnalyticsPage() {
 
   const wonDeals = (deals as Deal[]).filter((deal) => deal.status === "won");
 
-  const topContacts = (deals as any[])
+  interface TopContact {
+    id: string;
+    name: string;
+    company: string | null;
+    deal_value: number;
+    deal_count: number;
+  }
+
+  const topContacts = (deals as (Deal & { contact: Contact | null })[])
     .reduce(
-      (
-        acc,
-        deal
-      ): {
-        id: string;
-        name: string;
-        company: string;
-        deal_value: number;
-        deal_count: number;
-      }[] => {
+      (acc: TopContact[], deal): TopContact[] => {
         if (!deal.contact) return acc;
-        const existing = acc.find((c) => c.id === deal.contact.id);
+        const existing = acc.find((c: TopContact) => c.id === deal.contact!.id);
         if (existing) {
           existing.deal_value += deal.value || 0;
           existing.deal_count += 1;
@@ -90,7 +89,7 @@ export default async function AnalyticsPage() {
       },
       []
     )
-    .sort((a, b) => b.deal_value - a.deal_value)
+    .sort((a: TopContact, b: TopContact) => b.deal_value - a.deal_value)
     .slice(0, 10);
 
   return (
@@ -131,7 +130,7 @@ export default async function AnalyticsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {topContacts.map((contact, index) => (
+              {topContacts.map((contact: TopContact, index: number) => (
                 <TableRow key={contact.id}>
                   <TableCell>{index + 1}</TableCell>
                   <TableCell className="font-medium">{contact.name}</TableCell>
