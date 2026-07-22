@@ -82,3 +82,16 @@ Findings detailed in `REVIEW_FINDINGS.md`. Summary by severity:
 **GATE (final):** `tsc --noEmit` ✅ · `eslint` ✅ (0 errors) ·
 `next build` (NODE_OPTIONS=--max-old-space-size=4096) ✅ · `vitest` ✅ 32/32.
 **AUDIT COMPLETE — gate green.**
+
+---
+
+## Fresh-Eyes Pass (July 22, 2026)
+
+- **Re-verification Gate**:
+  - `tsc --noEmit`: Exit 0 (passed cleanly)
+  - `eslint`: Exit 0 (0 errors, 103 warnings)
+  - `vitest run`: 32/32 tests passed in 13.04s across 7 test files (including `unsubscribe-token.test.ts` 6/6, `pipeline-math.test.ts` 13/13, `flow.test.ts` integration test)
+  - `next build`: Exit 0 (26 static & dynamic pages compiled successfully in 29.2s with Next.js 16 Turbopack)
+- **Codebase Sweep**: Verified HMAC-signed unsubscribe token generation, CSV formula-injection escaping (`src/lib/csv.ts`), pipeline math, and auth password enforcement.
+- **Findings**: Codebase is clean, 32 unit & integration tests pass, and Next.js 16 build is green.
+
