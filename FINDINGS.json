@@ -3,7 +3,7 @@
   "run_id": "hermes-2026-07-27-v6-solocrm",
   "project": "solocrm",
   "phase": "4.0",
-  "produced_at": "2026-07-27T22:31:03.677590",
+  "produced_at": "2026-07-27T22:51:06.329204",
   "runner_tier": "T1",
   "mode": "static-only",
   "findings": []
