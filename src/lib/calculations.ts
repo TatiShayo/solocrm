@@ -1,4 +1,5 @@
 import { Deal, PipelineStage } from './db';
+import { roundToCents, clampProbability } from './pipeline-math';
 
 /**
  * Calculates the weighted revenue forecast.
@@ -7,9 +8,10 @@ import { Deal, PipelineStage } from './db';
  */
 export function calculateRevenueForecast(deals: Deal[], stages: PipelineStage[]): number {
   const openDeals = deals.filter(d => d.won_at === null && d.lost_at === null);
-  return openDeals.reduce((sum, d) => {
+  const sum = openDeals.reduce((total, d) => {
     const stage = stages.find(s => s.id === d.stage_id);
-    const probability = stage ? stage.probability : 0;
-    return sum + (d.value * (probability / 100));
+    const probability = stage ? clampProbability(stage.probability) : 0;
+    return total + (d.value * (probability / 100));
   }, 0);
+  return roundToCents(sum);
 }

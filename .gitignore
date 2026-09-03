@@ -44,3 +44,26 @@ next-env.d.ts
 .github/workflows/
 .github/workflows/
 node_modules_old/
+
+# Universal HERMES Ignore Rules
+node_modules/
+.npm-cache/
+dist/
+build/
+.turbo/
+.vercel/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+venv/
+.venv/
+env/
+*.egg-info/
+.env.local
+.env.*.local
+*.log
+$null
+*.zip
+Thumbs.db

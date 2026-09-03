@@ -30,7 +30,7 @@ export async function updateSequenceStatus(sequenceId: string, isActive: boolean
   try {
     const seq = await db.emailSequences.findById(sequenceId);
     if (!seq || seq.user_id !== user.id) {
-      throw new Error('Sequence not found.');
+      throw new Error('Sequence not found or unauthorized.');
     }
     await db.emailSequences.update(sequenceId, { is_active: isActive });
     revalidatePath('/sequences');
@@ -48,7 +48,7 @@ export async function deleteSequence(sequenceId: string) {
   try {
     const seq = await db.emailSequences.findById(sequenceId);
     if (!seq || seq.user_id !== user.id) {
-      throw new Error('Sequence not found.');
+      throw new Error('Sequence not found or unauthorized.');
     }
     
     // Delete steps
@@ -88,7 +88,7 @@ export async function addSequenceStep(
   try {
     const seq = await db.emailSequences.findById(sequenceId);
     if (!seq || seq.user_id !== user.id) {
-      throw new Error('Sequence not found.');
+      throw new Error('Sequence not found or unauthorized.');
     }
 
     const steps = await db.sequenceSteps.list(s => s.sequence_id === sequenceId);
@@ -117,7 +117,12 @@ export async function deleteSequenceStep(sequenceId: string, stepId: string) {
   try {
     const seq = await db.emailSequences.findById(sequenceId);
     if (!seq || seq.user_id !== user.id) {
-      throw new Error('Unauthorized.');
+      throw new Error('Sequence not found or unauthorized.');
+    }
+
+    const step = await db.sequenceSteps.findById(stepId);
+    if (!step || step.sequence_id !== sequenceId) {
+      throw new Error('Sequence step not found or unauthorized.');
     }
 
     await db.sequenceSteps.delete(stepId);

@@ -7,6 +7,9 @@ import { rateLimit, clientIpFrom } from '@/lib/rate-limit';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 
+import { sanitizeCsvCell } from '@/lib/csv';
+import { normalizeEmail, normalizePhone } from '@/lib/deduplication';
+
 function escapeHtml(str: string): string {
   return str
     .replace(/&/g, '&amp;')
@@ -42,9 +45,10 @@ export async function createContact(data: {
 }) {
   const user = await requireUser();
 
-  if (data.email) {
+  const cleanEmail = normalizeEmail(data.email);
+  if (cleanEmail) {
     const existing = await db.contacts.find(
-      c => c.user_id === user.id && c.email?.toLowerCase() === data.email?.toLowerCase()
+      c => c.user_id === user.id && normalizeEmail(c.email) === cleanEmail
     );
     if (existing) {
       return { success: false, error: 'A contact with this email already exists.' };
@@ -54,15 +58,15 @@ export async function createContact(data: {
   try {
     const newContact = await db.contacts.insert({
       user_id: user.id,
-      first_name: data.first_name || '',
-      last_name: data.last_name || '',
-      email: data.email || '',
-      phone: data.phone || '',
-      company: data.company || '',
-      title: data.title || '',
-      source: data.source || 'Manual',
-      tags: data.tags || [],
-      notes: data.notes || '',
+      first_name: sanitizeCsvCell(data.first_name || ''),
+      last_name: sanitizeCsvCell(data.last_name || ''),
+      email: cleanEmail || '',
+      phone: sanitizeCsvCell(data.phone || ''),
+      company: sanitizeCsvCell(data.company || ''),
+      title: sanitizeCsvCell(data.title || ''),
+      source: sanitizeCsvCell(data.source || 'Manual'),
+      tags: (data.tags || []).map(t => sanitizeCsvCell(t)).filter(Boolean),
+      notes: data.notes ? sanitizeCsvCell(data.notes) : '',
       is_opted_out: false,
     });
     revalidatePath('/contacts');
@@ -82,7 +86,15 @@ export async function updateContact(id: string, data: Partial<Contact>) {
     if (!contact || contact.user_id !== user.id) {
       return { success: false, error: 'Unauthorized or contact not found.' };
     }
-    const updated = await db.contacts.update(id, data);
+    const cleanData: Partial<Contact> = { ...data };
+    if (cleanData.email !== undefined) cleanData.email = normalizeEmail(cleanData.email);
+    if (cleanData.first_name !== undefined && cleanData.first_name !== null) cleanData.first_name = sanitizeCsvCell(cleanData.first_name);
+    if (cleanData.last_name !== undefined && cleanData.last_name !== null) cleanData.last_name = sanitizeCsvCell(cleanData.last_name);
+    if (cleanData.company !== undefined && cleanData.company !== null) cleanData.company = sanitizeCsvCell(cleanData.company);
+    if (cleanData.title !== undefined && cleanData.title !== null) cleanData.title = sanitizeCsvCell(cleanData.title);
+    if (cleanData.tags !== undefined && Array.isArray(cleanData.tags)) cleanData.tags = cleanData.tags.map(t => sanitizeCsvCell(t)).filter(Boolean);
+
+    const updated = await db.contacts.update(id, cleanData);
     revalidatePath('/contacts');
     revalidatePath(`/contacts/${id}`);
     return { success: true, contact: updated };
@@ -130,7 +142,7 @@ export async function deleteContact(id: string) {
 }
 
 /**
- * Bulk inserts contacts.
+ * Bulk inserts contacts with sanitization and duplicate avoidance.
  */
 export async function bulkInsertContacts(contactsList: Array<{
   first_name: string | null;
@@ -146,35 +158,44 @@ export async function bulkInsertContacts(contactsList: Array<{
   const user = await requireUser();
 
   try {
+    const existingUserContacts = await db.contacts.list(c => c.user_id === user.id);
+    const existingEmails = new Set(
+      existingUserContacts.map(c => normalizeEmail(c.email)).filter(Boolean)
+    );
+    const existingPhones = new Set(
+      existingUserContacts.map(c => normalizePhone(c.phone)).filter(Boolean)
+    );
+
     const inserted = [];
     for (const c of contactsList) {
-      // Check for duplicate emails for this user to avoid imports overriding existing data
-      let skip = false;
-      if (c.email) {
-        const existing = await db.contacts.find(
-          ec => ec.user_id === user.id && ec.email?.toLowerCase() === c.email?.toLowerCase()
-        );
-        if (existing) {
-          skip = true;
-        }
+      const cleanEmail = normalizeEmail(c.email);
+      const cleanPhone = normalizePhone(c.phone);
+
+      // Check duplicate against existing DB and already-inserted batch
+      if (cleanEmail && existingEmails.has(cleanEmail)) {
+        continue;
+      }
+      if (cleanPhone && cleanPhone.length >= 7 && existingPhones.has(cleanPhone)) {
+        continue;
       }
 
-      if (!skip) {
-        const newContact = await db.contacts.insert({
-          user_id: user.id,
-          first_name: c.first_name || '',
-          last_name: c.last_name || '',
-          email: c.email || '',
-          phone: c.phone || '',
-          company: c.company || '',
-          title: c.title || '',
-          source: c.source || 'CSV Import',
-          tags: c.tags || [],
-          notes: c.notes || '',
-          is_opted_out: false,
-        });
-        inserted.push(newContact);
-      }
+      const newContact = await db.contacts.insert({
+        user_id: user.id,
+        first_name: sanitizeCsvCell(c.first_name || ''),
+        last_name: sanitizeCsvCell(c.last_name || ''),
+        email: cleanEmail || '',
+        phone: sanitizeCsvCell(c.phone || ''),
+        company: sanitizeCsvCell(c.company || ''),
+        title: sanitizeCsvCell(c.title || ''),
+        source: sanitizeCsvCell(c.source || 'CSV Import'),
+        tags: (c.tags || []).map(t => sanitizeCsvCell(t)).filter(Boolean),
+        notes: c.notes ? sanitizeCsvCell(c.notes) : '',
+        is_opted_out: false,
+      });
+
+      if (cleanEmail) existingEmails.add(cleanEmail);
+      if (cleanPhone) existingPhones.add(cleanPhone);
+      inserted.push(newContact);
     }
     revalidatePath('/contacts');
     return { success: true, count: inserted.length };
@@ -421,7 +442,7 @@ export async function enrollInSequence(contactId: string, sequenceId: string) {
 /**
  * Opts a contact in or out.
  */
-export async function optOutContact(contactId: string, isOptedOut: boolean) {
+export async function optOutContact(contactId: string, isOptedOut: boolean = true) {
   const user = await requireUser();
   try {
     const contact = await db.contacts.findById(contactId);

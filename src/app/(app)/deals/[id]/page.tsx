@@ -22,7 +22,7 @@ export default async function DealDetailPage({ params }: PageProps) {
 
   // Fetch associated stages, contacts, and timeline events
   const [stages, contacts, timelineEvents] = await Promise.all([
-    db.pipelineStages.list(),
+    db.pipelineStages.list(s => s.pipeline_id === deal.pipeline_id),
     db.contacts.list(c => c.user_id === user.id),
     db.dealTimeline.list(t => t.deal_id === id),
   ]);

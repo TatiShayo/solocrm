@@ -172,15 +172,33 @@ export default function PipelineClient({
     if (!activeDeal) return;
 
     if (activeDeal.stage_id !== targetStageId) {
+      const targetStage = stages.find(s => s.id === targetStageId);
+      const isWon = targetStage?.name.toLowerCase() === 'won' || targetStageId === 'stage-won';
+      const isLost = targetStage?.name.toLowerCase() === 'lost' || targetStageId === 'stage-lost';
+      const targetProb = isWon ? 100 : isLost ? 0 : (targetStage ? targetStage.probability : activeDeal.probability);
+
       const originalDeals = [...deals];
-      // Optimistic state update
+      // Optimistic state update with probability and won/lost timestamp
       setDeals(prev =>
-        prev.map(d => (d.id === activeId ? { ...d, stage_id: targetStageId } : d))
+        prev.map(d =>
+          d.id === activeId
+            ? {
+                ...d,
+                stage_id: targetStageId,
+                probability: targetProb,
+                won_at: isWon ? new Date().toISOString() : null,
+                lost_at: isLost ? new Date().toISOString() : null,
+                lost_reason: isLost ? (d.lost_reason || 'Moved to Lost') : null,
+              }
+            : d
+        )
       );
 
       const res = await updateDealStage(activeId, targetStageId);
       if (res.success) {
-        // Fetch new timeline events
+        if (res.deal) {
+          setDeals(prev => prev.map(d => (d.id === activeId ? res.deal! : d)));
+        }
         router.refresh();
       } else {
         // Revert on failure

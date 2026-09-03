@@ -38,11 +38,13 @@ export async function updateDealStage(dealId: string, newStageId: string) {
       updates.won_at = new Date().toISOString();
       updates.lost_at = null;
       updates.lost_reason = null;
+      updates.probability = 100;
     } 
     // If moved to Lost stage
     else if (stage.name.toLowerCase() === 'lost' || newStageId === 'stage-lost') {
       updates.lost_at = new Date().toISOString();
       updates.won_at = null;
+      updates.probability = 0;
       // Do not clear lost_reason if it is already set, otherwise set default
       if (!deal.lost_reason) {
         updates.lost_reason = 'Moved to Lost';
@@ -53,9 +55,10 @@ export async function updateDealStage(dealId: string, newStageId: string) {
       updates.won_at = null;
       updates.lost_at = null;
       updates.lost_reason = null;
+      updates.probability = stage.probability;
     }
 
-    await db.deals.update(dealId, updates);
+    const updatedDeal = await db.deals.update(dealId, updates);
 
     // Add event to timeline
     await db.dealTimeline.insert({
@@ -69,7 +72,7 @@ export async function updateDealStage(dealId: string, newStageId: string) {
     if (deal.contact_id) {
       revalidatePath(`/contacts/${deal.contact_id}`);
     }
-    return { success: true };
+    return { success: true, deal: updatedDeal };
   } catch (error: any) {
     console.error('Error updating deal stage:', error);
     return { success: false, error: error.message || 'Failed to update deal stage.' };
