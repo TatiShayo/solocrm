@@ -10,6 +10,25 @@ import { headers } from 'next/headers';
 import { sanitizeCsvCell } from '@/lib/csv';
 import { normalizeEmail, normalizePhone } from '@/lib/deduplication';
 
+/**
+ * Fields a caller may change on a contact.
+ *
+ * `db.contacts.update` blind-spreads its argument into the stored row, so
+ * anything not listed here was previously settable by the client — including
+ * `user_id`, which let a caller reassign their contact to another tenant.
+ */
+const CONTACT_UPDATABLE_FIELDS = [
+  'first_name',
+  'last_name',
+  'email',
+  'phone',
+  'company',
+  'title',
+  'source',
+  'tags',
+  'notes',
+] as const;
+
 function escapeHtml(str: string): string {
   return str
     .replace(/&/g, '&amp;')
@@ -86,7 +105,16 @@ export async function updateContact(id: string, data: Partial<Contact>) {
     if (!contact || contact.user_id !== user.id) {
       return { success: false, error: 'Unauthorized or contact not found.' };
     }
-    const cleanData: Partial<Contact> = { ...data };
+    // Allowlist the fields the caller may change. `db.contacts.update` spreads
+    // the object into the stored row, so previously a caller could pass
+    // `{ user_id: "<other-user>" }` and hand their contact to another tenant —
+    // or overwrite `id`, `created_at`, or any other column.
+    const cleanData: Partial<Contact> = {};
+    for (const key of CONTACT_UPDATABLE_FIELDS) {
+      if (key in data) {
+        (cleanData as Record<string, unknown>)[key] = (data as Record<string, unknown>)[key];
+      }
+    }
     if (cleanData.email !== undefined) cleanData.email = normalizeEmail(cleanData.email);
     if (cleanData.first_name !== undefined && cleanData.first_name !== null) cleanData.first_name = sanitizeCsvCell(cleanData.first_name);
     if (cleanData.last_name !== undefined && cleanData.last_name !== null) cleanData.last_name = sanitizeCsvCell(cleanData.last_name);

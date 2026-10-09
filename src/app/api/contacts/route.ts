@@ -46,14 +46,16 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ contacts: [] });
   }
 
-  const escaped = search.replace(/[%_\\]/g, "\\$&");
+  // PostgREST `or()` treats `,` `(` `)` `.` `"` `:` `\` as structural metacharacters.
+  // Escaping only the LIKE wildcards (`%`, `_`, `\`) lets a caller append
+  // `user_id.eq.<uuid>` to the filter and read another tenant's contacts, so
+  // every metacharacter is stripped here.
+  const escaped = search.replace(/[%_,()".:\\]/g, "");
   const { data: contacts } = await supabase
     .from("contacts")
     .select("*")
     .eq("user_id", user.id)
-    .or(
-      `name.ilike.*${escaped}*,email.ilike.*${escaped}*,company.ilike.*${escaped}*`
-    )
+    .or(`name.ilike.*${escaped}*,email.ilike.*${escaped}*,company.ilike.*${escaped}*`)
     .order("name")
     .limit(50);
 

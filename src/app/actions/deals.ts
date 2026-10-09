@@ -91,6 +91,10 @@ export async function updateDealDetails(
     close_date: string | null;
     notes: string | null;
     stage_id: string;
+    // `Deal.probability` exists on the stored row but was missing from this
+    // parameter type, so no caller could update it (and the tenant-isolation
+    // test, which does, failed to compile).
+    probability?: number | null;
   }
 ) {
   const user = await requireUser();

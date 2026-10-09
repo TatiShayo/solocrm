@@ -1,4 +1,5 @@
 import { Deal, PipelineStage } from './db';
+import { buildStageIndex, isWonDeal, isLostDeal, type StageIndex } from './stage-identity';
 
 export interface DealValue {
   value: number;
@@ -121,9 +122,9 @@ export interface WinRateMetrics {
 /**
  * Calculates win rate and won/lost values for closed deals.
  */
-export function calculateWinRate(deals: Deal[]): WinRateMetrics {
-  const wonDeals = deals.filter(d => d.won_at !== null || d.stage_id === 'stage-won');
-  const lostDeals = deals.filter(d => d.lost_at !== null || d.stage_id === 'stage-lost');
+export function calculateWinRate(deals: Deal[], stageIndex?: StageIndex): WinRateMetrics {
+  const wonDeals = deals.filter((d) => isWonDeal(d, stageIndex));
+  const lostDeals = deals.filter((d) => isLostDeal(d, stageIndex));
   const totalClosed = wonDeals.length + lostDeals.length;
 
   const totalWonValue = roundToCents(wonDeals.reduce((acc, d) => acc + (d.value || 0), 0));
@@ -144,10 +145,14 @@ export function calculateWinRate(deals: Deal[]): WinRateMetrics {
 /**
  * Calculates the average deal size across open and won deals (or all deals).
  */
-export function calculateAverageDealSize(deals: Deal[], onlyWon: boolean = false): number {
+export function calculateAverageDealSize(
+  deals: Deal[],
+  onlyWon: boolean = false,
+  stageIndex?: StageIndex
+): number {
   const targetDeals = onlyWon
-    ? deals.filter(d => d.won_at !== null || d.stage_id === 'stage-won')
-    : deals.filter(d => d.lost_at === null && d.stage_id !== 'stage-lost');
+    ? deals.filter((d) => isWonDeal(d, stageIndex))
+    : deals.filter((d) => !isLostDeal(d, stageIndex));
 
   if (targetDeals.length === 0) return 0;
   const sum = targetDeals.reduce((acc, d) => acc + (d.value || 0), 0);
@@ -157,9 +162,9 @@ export function calculateAverageDealSize(deals: Deal[], onlyWon: boolean = false
 /**
  * Calculates the average sales cycle in days for won deals.
  */
-export function calculateAverageSalesCycleDays(deals: Deal[]): number {
+export function calculateAverageSalesCycleDays(deals: Deal[], stageIndex?: StageIndex): number {
   const wonWithDates = deals.filter(
-    d => (d.won_at || d.stage_id === 'stage-won') && d.won_at && (d as any).created_at
+    d => isWonDeal(d, stageIndex) && d.won_at && (d as any).created_at
   );
 
   if (wonWithDates.length === 0) return 0;
@@ -200,7 +205,11 @@ export interface DealFilterOptions {
 /**
  * Filters a list of deals according to criteria.
  */
-export function filterDeals(deals: Deal[], filters: DealFilterOptions): Deal[] {
+export function filterDeals(
+  deals: Deal[],
+  filters: DealFilterOptions,
+  stageIndex?: StageIndex
+): Deal[] {
   return deals.filter(deal => {
     // 1. Search Query (title, notes)
     if (filters.searchQuery && filters.searchQuery.trim()) {
@@ -217,8 +226,8 @@ export function filterDeals(deals: Deal[], filters: DealFilterOptions): Deal[] {
 
     // 3. Status Filter
     if (filters.status && filters.status !== 'all') {
-      const isWon = deal.won_at !== null || deal.stage_id === 'stage-won';
-      const isLost = deal.lost_at !== null || deal.stage_id === 'stage-lost';
+      const isWon = isWonDeal(deal, stageIndex);
+      const isLost = isLostDeal(deal, stageIndex);
       const isOpen = !isWon && !isLost;
 
       if (filters.status === 'open' && !isOpen) return false;

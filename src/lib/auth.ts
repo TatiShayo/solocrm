@@ -4,7 +4,29 @@ import { createHmac, scryptSync, timingSafeEqual, randomBytes } from 'crypto';
 import { db, Profile } from './db';
 
 const COOKIE_NAME = 'solocrm-session';
-const SESSION_SECRET = process.env.APP_SECRET || 'change-me-in-production-use-32-bytes-random';
+
+/**
+ * Session-signing secret and maximum age.
+ *
+ * Fails closed: with a known default, anyone can forge `userId:ts:HMAC` for any
+ * user and take over that account. `verifySession` previously read the embedded
+ * timestamp but never compared it, so a leaked token was valid forever — the
+ * 7-day `maxAge` lived only in the cookie, which the client controls.
+ */
+const SESSION_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+
+function resolveSessionSecret(): string {
+  const secret = process.env.APP_SECRET;
+  if (secret) return secret;
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error(
+      'APP_SECRET must be set in production — session tokens would otherwise be forgeable'
+    );
+  }
+  return 'dev-only-session-secret';
+}
+
+const SESSION_SECRET = resolveSessionSecret();
 // Demo fallback only outside production (dev + unit tests), never in prod.
 const DEMO_ENABLED =
   (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') &&
@@ -25,6 +47,13 @@ function verifySession(token: string): string | null {
   hmac.update(`${userId}:${ts}`);
   const expected = hmac.digest('hex');
   if (sig.length !== expected.length) return null;
+
+  // Enforce expiry. The cookie's own `maxAge` is client-controlled and cannot be
+  // trusted, so a leaked token was previously valid forever.
+  const issuedAt = Number(ts);
+  if (!Number.isFinite(issuedAt) || issuedAt <= 0) return null;
+  if (Date.now() - issuedAt > SESSION_MAX_AGE_MS) return null;
+
   try {
     if (timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) {
       return userId;

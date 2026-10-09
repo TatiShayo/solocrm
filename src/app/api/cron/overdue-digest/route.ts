@@ -1,13 +1,13 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { sendEmail } from "@/lib/resend";
+import { requireCron } from "@/lib/cron-guard";
 
 export async function GET(request: Request) {
-  const authHeader = request.headers.get("authorization");
-  const cronSecret = process.env.CRON_SECRET;
-  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  // Constant-time comparison — the previous `authHeader !== \`Bearer ${...}\``
+  // leaked the secret byte-by-byte through timing.
+  const unauthorized = requireCron(request);
+  if (unauthorized) return unauthorized;
 
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

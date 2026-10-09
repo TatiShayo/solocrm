@@ -1,20 +1,22 @@
 import { NextResponse } from "next/server";
 import { processScheduledEmails } from "@/lib/sequence-engine";
+import { requireCron } from "@/lib/cron-guard";
 
+/**
+ * Processes due scheduled sequence emails.
+ *
+ * Shares a constant-time guard with /api/cron/send-emails (a historical
+ * duplicate) rather than re-implementing the bearer comparison.
+ */
 export async function GET(request: Request) {
-  const authHeader = request.headers.get("authorization");
-  const cronSecret = process.env.CRON_SECRET;
-  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauthorized = requireCron(request);
+  if (unauthorized) return unauthorized;
 
   try {
     const result = await processScheduledEmails();
     return NextResponse.json(result);
   } catch (error) {
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Unknown error" },
-      { status: 500 }
-    );
+    console.error("Scheduled email processing failed:", error);
+    return NextResponse.json({ error: "Processing failed" }, { status: 500 });
   }
 }

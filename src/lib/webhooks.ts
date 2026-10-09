@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { assertPublicUrl, SAFE_FETCH_INIT } from "./ssrf";
 
 interface WebhookPayload {
   event: string;
@@ -28,15 +29,27 @@ async function fireWebhooks(userId: string, event: string, data: Record<string, 
   const matching = webhooks.filter((w) => (w.events as string[]).includes(event));
 
   await Promise.allSettled(
-    matching.map((webhook) =>
-      fetch(webhook.url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      }).catch((err) => {
+    matching.map(async (webhook) => {
+      // The URL is user-supplied and previously reachable internal services
+      // (cloud metadata at 169.254.169.254, loopback, RFC1918). Validate the
+      // scheme, resolve DNS, and reject any private address; do not follow
+      // redirects, which would otherwise bypass all of the above.
+      const check = await assertPublicUrl(webhook.url);
+      if (!check.ok) {
+        console.error(`Webhook rejected for ${webhook.url}: ${check.reason}`);
+        return;
+      }
+      try {
+        await fetch(check.url, {
+          ...SAFE_FETCH_INIT,
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      } catch (err) {
         console.error(`Webhook failed for ${webhook.url}:`, err);
-      })
-    )
+      }
+    })
   );
 }
 

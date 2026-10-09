@@ -97,10 +97,14 @@ describe('Tenant Isolation & Authorization Access Control', () => {
     // Attempt to update deal details as default-user
     const detailsRes = await updateDealDetails(otherDeal.id, {
       title: 'Tampered Deal',
+      contact_id: null,
       value: 1,
       probability: 0,
       close_date: null,
       notes: 'Hacked',
+      // stage_id is required; reuse the deal's own stage so this exercises
+      // authorization rather than validation.
+      stage_id: otherDeal.stage_id,
     });
     expect(detailsRes.success).toBe(false);
     expect(detailsRes.error).toContain('unauthorized');
