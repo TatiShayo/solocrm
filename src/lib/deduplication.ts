@@ -190,7 +190,6 @@ export function findDuplicateContacts(
     const existingFullName = `${existingFirst} ${existingLast}`.trim();
     const existingCompany = (existing.company || '').trim().toLowerCase();
 
-    // 1. Exact Email Match (Highest Confidence: 100%)
     if (checkEmail && candidateEmail && existingEmail && candidateEmail === existingEmail) {
       matches.push({
         existingContact: existing,
@@ -201,7 +200,6 @@ export function findDuplicateContacts(
       continue;
     }
 
-    // 2. Normalized Phone Match (Confidence: 95%)
     if (checkPhone && candidatePhone && existingPhone && candidatePhone.length >= 7) {
       if (candidatePhone === existingPhone || candidatePhone.endsWith(existingPhone) || existingPhone.endsWith(candidatePhone)) {
         matches.push({
@@ -214,7 +212,6 @@ export function findDuplicateContacts(
       }
     }
 
-    // 3. Exact Name + Same Company (Confidence: 90%)
     if (
       checkCompany &&
       candidateFullName &&
@@ -233,7 +230,6 @@ export function findDuplicateContacts(
       continue;
     }
 
-    // 4. Fuzzy Name + Matching Company (Confidence: 80-89%)
     if (candidateFullName && existingFullName && candidateCompany && existingCompany) {
       const nameSim = Math.max(
         stringSimilarity(candidateFullName, existingFullName),
@@ -252,7 +248,6 @@ export function findDuplicateContacts(
       }
     }
 
-    // 5. Very High Fuzzy Name Match (Confidence: 75-85%)
     if (candidateFullName.length >= 5 && existingFullName.length >= 5) {
       const nameSim = jaroWinklerSimilarity(candidateFullName, existingFullName);
       if (nameSim >= 0.92) {

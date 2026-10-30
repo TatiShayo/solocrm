@@ -178,7 +178,6 @@ Diana,Prince,"VIP, Enterprise; Non-Profit | SaaS"`;
       const csvContent = `First Name,Last Name,Email
 Alice,Smith,alice@acme.com
 
-
 Bob,Jones,bob@globex.com
 `;
       const result = parseAndSanitizeContactsCsv(csvContent);

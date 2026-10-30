@@ -127,7 +127,6 @@ export default function ContactDetailClient({
     }
   };
 
-  // Handle Edit Submit
   const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setEditError(null);
@@ -156,7 +155,6 @@ export default function ContactDetailClient({
     }
   };
 
-  // Handle Delete Contact
   const handleDelete = async () => {
     if (confirm('Are you sure you want to permanently delete this contact and all associated tasks?')) {
       const res = await deleteContact(contact.id);
@@ -169,7 +167,6 @@ export default function ContactDetailClient({
     }
   };
 
-  // Handle Create Deal
   const handleCreateDeal = async (e: React.FormEvent) => {
     e.preventDefault();
     setDealError(null);
@@ -199,7 +196,6 @@ export default function ContactDetailClient({
     }
   };
 
-  // Handle Create Task
   const handleCreateTask = async (e: React.FormEvent) => {
     e.preventDefault();
     setTaskError(null);
@@ -226,7 +222,6 @@ export default function ContactDetailClient({
     }
   };
 
-  // Handle Toggle Task
   const handleToggleTask = async (taskId: string, currentStatus: boolean) => {
     const res = await toggleTaskComplete(taskId, !currentStatus);
     if (res.success) {
@@ -236,7 +231,6 @@ export default function ContactDetailClient({
     }
   };
 
-  // Handle Sequence Enrollment
   const handleEnroll = async () => {
     setSequenceError(null);
     if (!selectedSequenceId) return;
@@ -250,7 +244,6 @@ export default function ContactDetailClient({
     }
   };
 
-  // Handle Opt Out Toggle
   const handleOptOutToggle = async (newVal: boolean) => {
     if (confirm(newVal ? 'Opt-out this contact? They will be removed from all active email sequences.' : 'Opt this contact back in?')) {
       const res = await optOutContact(contact.id, newVal);
@@ -293,10 +286,10 @@ export default function ContactDetailClient({
 
       {/* Grid: 2 columns (Left: Details/Forms/Timeline, Right: Deals/Tasks/Sequences) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
+
         {/* Left Column (2/3 width on large screens) */}
         <div className="lg:col-span-2 space-y-6">
-          
+
           {/* Card: Basic Info / Edit Form */}
           <div className="bg-[#0f1a1c] border border-[#1a2e30] rounded-2xl p-6 shadow-xl">
             {isEditing ? (
@@ -534,7 +527,7 @@ export default function ContactDetailClient({
                     <div className="absolute left-1.5 top-1.5 w-4 h-4 rounded-full border-2 border-[#09100f] bg-[#0f1a1c] group-hover:scale-110 transition-transform">
                       <div className="w-1.5 h-1.5 rounded-full bg-[#1a2e30] mx-auto my-0.5"></div>
                     </div>
-                    
+
                     {/* Event Card */}
                     <div className="bg-[#09100f] border border-[#1a2e30] p-4 rounded-xl space-y-1">
                       <div className="flex justify-between items-start gap-4">
@@ -747,12 +740,12 @@ export default function ContactDetailClient({
             <h3 className="font-bold text-white text-md flex items-center gap-2">
               <Sparkles className="w-4.5 h-4.5 text-[#06b6d4]" /> AI Email Draft Assistant
             </h3>
-            
+
             <div className="space-y-3">
               <p className="text-xs text-neutral-400">
                 Provide instructions/guidelines, and the AI will draft a personalized email for this contact.
               </p>
-              
+
               <textarea
                 placeholder="e.g. Write a friendly follow-up email about their product interest..."
                 value={aiDraftPrompt}
@@ -760,7 +753,7 @@ export default function ContactDetailClient({
                 rows={3}
                 className="w-full bg-[#09100f] border border-[#1a2e30] focus:border-[#06b6d4] rounded-xl py-2 px-3 text-white text-xs outline-none transition-colors resize-none font-sans"
               />
-              
+
               <button
                 onClick={handleGenerateEmailDraft}
                 disabled={isAiDraftLoading || !aiDraftPrompt.trim()}

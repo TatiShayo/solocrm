@@ -50,20 +50,17 @@ export async function deleteSequence(sequenceId: string) {
     if (!seq || seq.user_id !== user.id) {
       throw new Error('Sequence not found or unauthorized.');
     }
-    
-    // Delete steps
+
     const steps = await db.sequenceSteps.list(s => s.sequence_id === sequenceId);
     for (const step of steps) {
       await db.sequenceSteps.delete(step.id);
     }
-    
-    // Delete active enrollments
+
     const enrollments = await db.sequenceEnrollments.list(e => e.sequence_id === sequenceId);
     for (const e of enrollments) {
       await db.sequenceEnrollments.delete(e.id);
     }
 
-    // Delete scheduled emails that aren't sent yet
     const scheduled = await db.scheduledEmails.list(e => e.sequence_id === sequenceId && e.sent_at === null);
     for (const e of scheduled) {
       await db.scheduledEmails.delete(e.id);

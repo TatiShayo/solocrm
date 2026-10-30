@@ -46,7 +46,6 @@ export default function SequencesClient({
   // Loading States
   const [isPending, startTransition] = useTransition();
 
-  // Create Sequence State
   const [newSeqName, setNewSeqName] = useState('');
   const [seqError, setSeqError] = useState<string | null>(null);
 
@@ -58,19 +57,16 @@ export default function SequencesClient({
   });
   const [stepError, setStepError] = useState<string | null>(null);
 
-  // Get selected sequence steps
   const currentSteps = steps
     .filter(s => s.sequence_id === selectedSequenceId)
     .sort((a, b) => a.step_number - b.step_number);
 
   const selectedSequence = sequences.find(s => s.id === selectedSequenceId);
 
-  // Get enrollment counts
   const getEnrollmentCount = (seqId: string) => {
     return enrollments.filter(e => e.sequence_id === seqId && e.is_active).length;
   };
 
-  // Handle Create Sequence
   const handleCreateSeq = async (e: React.FormEvent) => {
     e.preventDefault();
     setSeqError(null);
@@ -105,7 +101,6 @@ export default function SequencesClient({
     }
   };
 
-  // Handle Delete Sequence
   const handleDeleteSeq = async (seqId: string) => {
     if (
       confirm(
@@ -127,7 +122,6 @@ export default function SequencesClient({
     }
   };
 
-  // Handle Add Step
   const handleAddStep = async (e: React.FormEvent) => {
     e.preventDefault();
     setStepError(null);
@@ -157,13 +151,11 @@ export default function SequencesClient({
     }
   };
 
-  // Handle Delete Step
   const handleDeleteStep = async (stepId: string) => {
     if (!selectedSequenceId) return;
     if (confirm('Are you sure you want to delete this step?')) {
       const res = await deleteSequenceStep(selectedSequenceId, stepId);
       if (res.success) {
-        // Fetch reordered steps
         setSteps(prev => prev.filter(s => s.id !== stepId));
         // Force refresh from server to fetch the newly renumbered order
         router.refresh();
@@ -200,7 +192,7 @@ export default function SequencesClient({
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
+
         {/* Left Column: Sequences List */}
         <div className="space-y-6">
           <div className="bg-[#0f1a1c] border border-[#1a2e30] rounded-2xl p-5 shadow-xl space-y-4">
@@ -297,7 +289,7 @@ export default function SequencesClient({
         <div className="lg:col-span-2">
           {selectedSequenceId && selectedSequence ? (
             <div className="bg-[#0f1a1c] border border-[#1a2e30] rounded-2xl p-6 shadow-xl space-y-6">
-              
+
               {/* Header Info */}
               <div className="flex items-center justify-between border-b border-[#1a2e30] pb-4">
                 <div>

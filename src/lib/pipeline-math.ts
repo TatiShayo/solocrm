@@ -211,7 +211,6 @@ export function filterDeals(
   stageIndex?: StageIndex
 ): Deal[] {
   return deals.filter(deal => {
-    // 1. Search Query (title, notes)
     if (filters.searchQuery && filters.searchQuery.trim()) {
       const q = filters.searchQuery.toLowerCase().trim();
       const titleMatch = (deal.title || '').toLowerCase().includes(q);
@@ -219,12 +218,10 @@ export function filterDeals(
       if (!titleMatch && !notesMatch) return false;
     }
 
-    // 2. Stage Filter
     if (filters.stageId && filters.stageId !== 'all') {
       if (deal.stage_id !== filters.stageId) return false;
     }
 
-    // 3. Status Filter
     if (filters.status && filters.status !== 'all') {
       const isWon = isWonDeal(deal, stageIndex);
       const isLost = isLostDeal(deal, stageIndex);
@@ -235,16 +232,13 @@ export function filterDeals(
       if (filters.status === 'lost' && !isLost) return false;
     }
 
-    // 4. Contact Filter
     if (filters.contactId) {
       if (deal.contact_id !== filters.contactId) return false;
     }
 
-    // 5. Value Range
     if (filters.minValue !== undefined && deal.value < filters.minValue) return false;
     if (filters.maxValue !== undefined && deal.value > filters.maxValue) return false;
 
-    // 6. Close Date Range
     if (filters.closeDateFrom && deal.close_date && deal.close_date < filters.closeDateFrom) return false;
     if (filters.closeDateTo && deal.close_date && deal.close_date > filters.closeDateTo) return false;
 

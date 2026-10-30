@@ -12,7 +12,6 @@ export default async function PipelinePage() {
   const pipeline = (await db.pipelines.find(p => p.user_id === user.id && p.is_default)) ||
     (await db.pipelines.find(p => p.user_id === user.id));
 
-  // Fetch scoped data
   const [deals, stages, contacts, tasks] = await Promise.all([
     db.deals.list(d => d.user_id === user.id),
     pipeline ? db.pipelineStages.list(s => s.pipeline_id === pipeline.id) : [],

@@ -20,7 +20,6 @@ export default async function DealDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  // Fetch associated stages, contacts, and timeline events
   const [stages, contacts, timelineEvents] = await Promise.all([
     db.pipelineStages.list(s => s.pipeline_id === deal.pipeline_id),
     db.contacts.list(c => c.user_id === user.id),

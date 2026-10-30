@@ -46,7 +46,6 @@ export default function ContactsClient({ initialContacts, initialDeals }: Contac
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [importModalOpen, setImportModalOpen] = useState(false);
 
-  // Add Contact Form state
   const [formFirst, setFormFirst] = useState('');
   const [formLast, setFormLast] = useState('');
   const [formEmail, setFormEmail] = useState('');
@@ -124,7 +123,6 @@ export default function ContactsClient({ initialContacts, initialDeals }: Contac
   const processedContacts = useMemo(() => {
     let result = [...contacts];
 
-    // 1. Search Query
     if (searchQuery.trim() !== '') {
       const query = searchQuery.toLowerCase().trim();
       result = result.filter(c => {
@@ -136,20 +134,17 @@ export default function ContactsClient({ initialContacts, initialDeals }: Contac
       });
     }
 
-    // 2. Tag Filter
     if (selectedTag !== '') {
       result = result.filter(c => c.tags && c.tags.includes(selectedTag));
     }
 
-    // 3. Source Filter
     if (selectedSource !== '') {
       result = result.filter(c => c.source === selectedSource);
     }
 
-    // 4. Sort
     result.sort((a, b) => {
       const getFullName = (c: Contact) => `${c.first_name || ''} ${c.last_name || ''}`.trim().toLowerCase();
-      
+
       switch (sortBy) {
         case 'name_first_asc':
           return (a.first_name || '').localeCompare(b.first_name || '');
@@ -175,7 +170,6 @@ export default function ContactsClient({ initialContacts, initialDeals }: Contac
     return result;
   }, [contacts, searchQuery, selectedTag, selectedSource, sortBy, contactDealValues]);
 
-  // Handle Add Contact Submit
   const handleAddSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormLoading(true);
@@ -236,11 +230,11 @@ export default function ContactsClient({ initialContacts, initialDeals }: Contac
         if (results.meta.fields) {
           setCsvHeaders(results.meta.fields);
           setCsvRows(results.data);
-          
+
           // Try to auto-map fields based on matching names
           const autoMapping: Record<string, string> = {};
           const fields = ['first_name', 'last_name', 'email', 'phone', 'company', 'title', 'source', 'tags', 'notes'];
-          
+
           fields.forEach(field => {
             const match = results.meta.fields!.find(h => {
               const headerClean = h.toLowerCase().replace(/[\s_-]/g, '');
@@ -252,7 +246,7 @@ export default function ContactsClient({ initialContacts, initialDeals }: Contac
             });
             autoMapping[field] = match || '';
           });
-          
+
           setMapping(autoMapping);
         } else {
           setImportError('No headers found in the CSV. Please ensure the first row has column titles.');
@@ -306,7 +300,6 @@ export default function ContactsClient({ initialContacts, initialDeals }: Contac
     const res = await bulkInsertContacts(contactsToImport);
     if (res.success) {
       setImportSuccess(`Successfully imported ${res.count} contacts!`);
-      // Update contacts local state by appending newly fetched ones or re-loading
       // For sandbox simplicity, let's refresh page or merge
       setTimeout(() => {
         window.location.reload();

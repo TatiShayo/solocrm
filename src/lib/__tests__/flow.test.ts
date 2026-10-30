@@ -42,9 +42,6 @@ describe('CRM Integration Flow Test', () => {
     const mockNow = new Date('2026-06-30T07:00:00.000Z');
     vi.setSystemTime(mockNow);
 
-    // 1. Reset database already completed in beforeEach
-    
-    // 2. Insert a contact
     const contactResult = await createContact({
       first_name: 'Peter',
       last_name: 'Parker',
@@ -60,7 +57,6 @@ describe('CRM Integration Flow Test', () => {
     const contact = contactResult.contact!;
     expect(contact.first_name).toBe('Peter');
 
-    // 3. Create a deal for that contact
     const dealResult = await createDealForContact({
       contact_id: contact.id,
       title: 'Bugle Front Page Photo',
@@ -70,13 +66,11 @@ describe('CRM Integration Flow Test', () => {
     const deal = dealResult.deal!;
     expect(deal.value).toBe(500);
 
-    // 4. Verify that a timeline event was created
     const timelineEvents = await db.dealTimeline.list(dt => dt.deal_id === deal.id);
     expect(timelineEvents).toHaveLength(1);
     expect(timelineEvents[0].event_type).toBe('created');
     expect(timelineEvents[0].description).toContain('Bugle Front Page Photo');
 
-    // 5. Complete a task for the contact and check that it was updated
     const taskResult = await addTaskForContact({
       contact_id: contact.id,
       title: 'Call J. Jonah Jameson',
@@ -92,7 +86,6 @@ describe('CRM Integration Flow Test', () => {
     expect(completeResult.task!.is_complete).toBe(true);
     expect(completeResult.task!.completed_at).toBe(mockNow.toISOString());
 
-    // 6. Move the deal stage, verifying the stage and timeline changes
     // Default stages are seeded: stage-lead, stage-contacted, stage-proposal, stage-negotiation, stage-won, stage-lost
     const moveResult = await updateDealStage(deal.id, 'stage-contacted');
     expect(moveResult.success).toBe(true);
@@ -106,7 +99,6 @@ describe('CRM Integration Flow Test', () => {
     expect(timelineAfterMove[1].event_type).toBe('stage_change');
     expect(timelineAfterMove[1].description).toContain('Contacted');
 
-    // 7. Mark the deal as Won and verify probability and won_at time
     const wonResult = await markDealWon(deal.id);
     expect(wonResult.success).toBe(true);
 
@@ -115,7 +107,6 @@ describe('CRM Integration Flow Test', () => {
     expect(wonDeal!.probability).toBe(100);
     expect(wonDeal!.won_at).toBe(mockNow.toISOString());
 
-    // 8. Run a background check on scheduled emails to verify progression
     // 8.1 Setup a sequence with 2 steps
     const sequence = await db.emailSequences.insert({
       user_id: 'default-user',
@@ -169,7 +160,7 @@ describe('CRM Integration Flow Test', () => {
     // Verify step 2 email is scheduled for mockNow + 2 days
     scheduledEmails = await db.scheduledEmails.list(e => e.contact_id === contact.id && e.sent_at === null);
     expect(scheduledEmails).toHaveLength(1);
-    
+
     const expectedStep2Date = new Date(mockNow.getTime());
     expectedStep2Date.setDate(expectedStep2Date.getDate() + 2);
     expect(scheduledEmails[0].scheduled_at).toBe(expectedStep2Date.toISOString());

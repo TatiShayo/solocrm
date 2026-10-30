@@ -21,25 +21,21 @@ export const dynamic = 'force-dynamic';
 export default async function DashboardPage() {
   const user = await requireUser();
 
-  // 1. Run background check for scheduled emails that are due
   const emailCheck = await checkAndSendScheduledEmails();
 
-  // 2. Fetch data from DB
   const [contacts, deals, tasks] = await Promise.all([
     db.contacts.list(c => c.user_id === user.id),
     db.deals.list(d => d.user_id === user.id),
     db.tasks.list(t => t.user_id === user.id),
   ]);
 
-  // Fetch stages of user's default pipeline for revenue forecasting
   const defaultPipeline = await db.pipelines.find(p => p.user_id === user.id && p.is_default);
   const stages = defaultPipeline 
     ? await db.pipelineStages.list(s => s.pipeline_id === defaultPipeline.id)
     : [];
 
-  // 3. Compute Metrics
   const totalContacts = contacts.length;
-  
+
   // Open deals (where won_at is null and lost_at is null)
   const openDeals = deals.filter(d => d.won_at === null && d.lost_at === null);
   const openDealsValue = openDeals.reduce((sum, d) => sum + (d.value || 0), 0);
@@ -144,10 +140,10 @@ export default async function DashboardPage() {
 
       {/* Grid: Columns for Quick Links & Lists */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
+
         {/* Left/Middle Column (2/3 width) - Recent Contacts & Tasks */}
         <div className="lg:col-span-2 space-y-8">
-          
+
           {/* Card: Recent Contacts */}
           <div className="bg-[#0f1a1c] border border-[#1a2e30] rounded-2xl p-6 shadow-lg space-y-4">
             <div className="flex items-center justify-between">
@@ -244,7 +240,7 @@ export default async function DashboardPage() {
 
         {/* Right Column (1/3 width) - Quick Links & CRM Tips */}
         <div className="space-y-8">
-          
+
           {/* Card: Quick Links */}
           <div className="bg-[#0f1a1c] border border-[#1a2e30] rounded-2xl p-6 shadow-lg space-y-4">
             <h3 className="text-lg font-bold text-white">Quick Actions</h3>

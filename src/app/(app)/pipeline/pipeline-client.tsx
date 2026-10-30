@@ -99,7 +99,6 @@ export default function PipelineClient({
   });
   const [editError, setEditError] = useState<string | null>(null);
 
-  // Add Deal Form state
   const [addForm, setAddForm] = useState({
     title: '',
     contact_id: '',
@@ -139,7 +138,7 @@ export default function PipelineClient({
   const openDeals = deals.filter(
     d => d.stage_id !== 'stage-won' && d.stage_id !== 'stage-lost'
   );
-  
+
   const weightedForecast = openDeals.reduce((sum, deal) => {
     const stage = stages.find(s => s.id === deal.stage_id);
     const prob = stage ? stage.probability : 0;
@@ -208,7 +207,6 @@ export default function PipelineClient({
     }
   };
 
-  // Handle Edit Submit
   const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!activeDealId) return;
@@ -227,8 +225,7 @@ export default function PipelineClient({
       if (editForm.stage_id === 'stage-lost' && editForm.lost_reason) {
         await markDealLost(activeDealId, editForm.lost_reason);
       }
-      
-      // Update local state deals
+
       setDeals(prev =>
         prev.map(d =>
           d.id === activeDealId
@@ -297,7 +294,6 @@ export default function PipelineClient({
     }
   };
 
-  // Delete Deal
   const handleDeleteDeal = async () => {
     if (!activeDealId) return;
     if (confirm('Are you sure you want to permanently delete this deal and its timeline events?')) {
@@ -342,7 +338,6 @@ export default function PipelineClient({
     }
   };
 
-  // Handle Add Submit
   const handleAddSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setAddError(null);
@@ -583,7 +578,7 @@ export default function PipelineClient({
       {activeDealId && activeDeal && (
         <div className="fixed inset-0 bg-[#09100f]/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-[#0f1a1c] border border-[#1a2e30] w-full max-w-4xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
-            
+
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-[#1a2e30]">
               <div>
@@ -611,7 +606,7 @@ export default function PipelineClient({
 
             {/* Content (Scrollable Grid) */}
             <div className="flex-1 overflow-y-auto p-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
-              
+
               {/* Left Column: Edit Form */}
               <div className="space-y-6">
                 <form onSubmit={handleEditSubmit} className="space-y-4">
@@ -745,7 +740,7 @@ export default function PipelineClient({
 
               {/* Right Column: AI Assistant & History */}
               <div className="space-y-6">
-                
+
                 {/* AI Summary Widget */}
                 <div className="bg-[#09100f] border border-[#1a2e30] p-5 rounded-2xl space-y-3">
                   <div className="flex justify-between items-center">
@@ -848,7 +843,6 @@ export default function PipelineClient({
   );
 }
 
-/* ============================================================================
    PIPELINE COLUMN COMPONENT
    ============================================================================ */
 interface PipelineColumnProps {
@@ -947,7 +941,6 @@ function PipelineColumn({
   );
 }
 
-/* ============================================================================
    SORTABLE DEAL CARD COMPONENT
    ============================================================================ */
 interface SortableDealCardProps {

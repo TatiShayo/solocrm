@@ -32,7 +32,6 @@ export function sanitizeCsvCell(value: unknown): string {
     str = str.replace(/^[=+\-@\t\r]+/, "").trim();
   }
 
-  // Remove any null bytes or control characters
   str = str.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "");
 
   return str;

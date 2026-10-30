@@ -28,7 +28,6 @@ export default async function ContactDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  // Fetch associated models
   const [deals, tasks, enrollments, scheduledEmails, sequences] = await Promise.all([
     db.deals.list(d => d.contact_id === id),
     db.tasks.list(t => t.contact_id === id),
@@ -37,7 +36,6 @@ export default async function ContactDetailPage({ params }: PageProps) {
     db.emailSequences.list(seq => seq.user_id === user.id),
   ]);
 
-  // Fetch pipeline stages of the user's default pipeline (to populate stage options when adding deals)
   const defaultPipeline = await db.pipelines.find(p => p.user_id === user.id && p.is_default);
   const pipelineStages = defaultPipeline 
     ? await db.pipelineStages.list(s => s.pipeline_id === defaultPipeline.id)
@@ -46,7 +44,6 @@ export default async function ContactDetailPage({ params }: PageProps) {
   // Construct activities timeline
   const timelineEvents: TimelineEvent[] = [];
 
-  // 1. Contact Creation
   timelineEvents.push({
     id: `contact-created-${contact.id}`,
     type: 'contact_created',
@@ -55,7 +52,6 @@ export default async function ContactDetailPage({ params }: PageProps) {
     date: contact.created_at,
   });
 
-  // 2. Deals Created
   deals.forEach(d => {
     timelineEvents.push({
       id: `deal-created-${d.id}`,
@@ -66,7 +62,6 @@ export default async function ContactDetailPage({ params }: PageProps) {
     });
   });
 
-  // 3. Tasks Created & Completed
   tasks.forEach(t => {
     timelineEvents.push({
       id: `task-created-${t.id}`,
@@ -87,7 +82,6 @@ export default async function ContactDetailPage({ params }: PageProps) {
     }
   });
 
-  // 4. Sequence Enrollments
   enrollments.forEach(se => {
     const seq = sequences.find(s => s.id === se.sequence_id);
     timelineEvents.push({
@@ -99,7 +93,6 @@ export default async function ContactDetailPage({ params }: PageProps) {
     });
   });
 
-  // 5. Emails Scheduled & Sent
   scheduledEmails.forEach(e => {
     const isSent = e.sent_at !== null;
     timelineEvents.push({

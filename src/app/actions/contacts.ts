@@ -155,7 +155,7 @@ export async function deleteContact(id: string) {
     for (const e of emails) {
       await db.scheduledEmails.delete(e.id);
     }
-    
+
     // We update deals to un-link them (or we can delete them, but setting contact_id to null is safer)
     const deals = await db.deals.list(d => d.contact_id === id);
     for (const d of deals) {
@@ -422,7 +422,6 @@ export async function enrollInSequence(contactId: string, sequenceId: string) {
     const sequence = await db.emailSequences.findById(sequenceId);
     if (!sequence || sequence.user_id !== user.id) throw new Error('Sequence not found or unauthorized.');
 
-    // Check if already active in this sequence
     const existing = await db.sequenceEnrollments.find(
       se => se.contact_id === contactId && se.sequence_id === sequenceId && se.is_active
     );
@@ -436,7 +435,6 @@ export async function enrollInSequence(contactId: string, sequenceId: string) {
     }
     const firstStep = steps.sort((a, b) => a.step_number - b.step_number)[0];
 
-    // Create enrollment
     await db.sequenceEnrollments.insert({
       contact_id: contactId,
       sequence_id: sequenceId,
@@ -536,7 +534,7 @@ export async function checkAndSendScheduledEmails() {
 
     for (const email of emails) {
       const contact = await db.contacts.findById(email.contact_id);
-      
+
       // If contact is not found or is opted out, remove/skip the scheduled email
       if (!contact || contact.is_opted_out) {
         await db.scheduledEmails.delete(email.id);
@@ -551,7 +549,7 @@ export async function checkAndSendScheduledEmails() {
       console.log(`[Email Sequence] Sending email to ${contact.email}`);
       console.log(`Subject: ${email.subject}`);
       console.log(`Body: ${emailBodyWithUnsubscribe}`);
-      
+
       if (process.env.RESEND_API_KEY) {
         try {
           const res = await fetch('https://api.resend.com/v1/emails', {
@@ -574,7 +572,6 @@ export async function checkAndSendScheduledEmails() {
         }
       }
 
-      // Update email sent_at
       const sentTime = new Date().toISOString();
       await db.scheduledEmails.update(email.id, {
         sent_at: sentTime
@@ -589,12 +586,11 @@ export async function checkAndSendScheduledEmails() {
         if (enrollment) {
           const steps = await db.sequenceSteps.list(s => s.sequence_id === email.sequence_id!);
           const sortedSteps = steps.sort((a, b) => a.step_number - b.step_number);
-          
+
           const currentStepIndex = sortedSteps.findIndex(s => s.id === email.step_id);
           const nextStep = sortedSteps[currentStepIndex + 1];
 
           if (nextStep) {
-            // Update enrollment to next step
             await db.sequenceEnrollments.update(enrollment.id, {
               current_step: nextStep.step_number
             });

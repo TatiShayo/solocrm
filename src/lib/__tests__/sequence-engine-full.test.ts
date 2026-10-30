@@ -67,23 +67,19 @@ describe('Sequence Engine, Scheduling & Opt-Out Flow', () => {
       body: 'Hey {{first_name}}, following up on our proposal.',
     });
 
-    // 1. Enroll
     const enrollRes = await enrollInSequence(contact.id, sequence.id);
     expect(enrollRes.success).toBe(true);
 
-    // 2. Step 1 email should be scheduled for right now
     let scheduled = await db.scheduledEmails.list(e => e.contact_id === contact.id && e.sent_at === null);
     expect(scheduled).toHaveLength(1);
     expect(scheduled[0].subject).toBe('Hello Tony from SoloCRM');
     expect(scheduled[0].body).toBe('Hi Tony Stark, we love what you do at Stark Industries.');
     expect(scheduled[0].scheduled_at).toBe(mockNow.toISOString());
 
-    // 3. Process scheduled emails for today
     const sendRes1 = await checkAndSendScheduledEmails();
     expect(sendRes1.success).toBe(true);
     expect(sendRes1.count).toBe(1);
 
-    // 4. Verify step 1 marked sent and step 2 scheduled for 5 days later
     const email1 = await db.scheduledEmails.findById(scheduled[0].id);
     expect(email1!.sent_at).toBe(mockNow.toISOString());
 
@@ -100,13 +96,11 @@ describe('Sequence Engine, Scheduling & Opt-Out Flow', () => {
     const expectedStep2Time = new Date(mockNow.getTime() + 5 * 24 * 60 * 60 * 1000);
     expect(step2Email!.scheduled_at).toBe(expectedStep2Time.toISOString());
 
-    // 5. Advance time by 5 days and process step 2
     vi.setSystemTime(expectedStep2Time);
     const sendRes2 = await checkAndSendScheduledEmails();
     expect(sendRes2.success).toBe(true);
     expect(sendRes2.count).toBe(1);
 
-    // 6. Verify enrollment completed (is_active: false)
     const finalEnrollment = await db.sequenceEnrollments.find(
       se => se.contact_id === contact.id && se.sequence_id === sequence.id
     );

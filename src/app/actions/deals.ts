@@ -60,7 +60,6 @@ export async function updateDealStage(dealId: string, newStageId: string) {
 
     const updatedDeal = await db.deals.update(dealId, updates);
 
-    // Add event to timeline
     await db.dealTimeline.insert({
       deal_id: dealId,
       event_type: 'stage_change',
@@ -93,7 +92,6 @@ export async function updateDealDetails(
     stage_id: string;
     // `Deal.probability` exists on the stored row but was missing from this
     // parameter type, so no caller could update it (and the tenant-isolation
-    // test, which does, failed to compile).
     probability?: number | null;
   }
 ) {
@@ -268,13 +266,11 @@ export async function deleteDeal(dealId: string) {
       throw new Error('Deal not found or unauthorized.');
     }
 
-    // Delete all timeline entries for the deal first
     const timeline = await db.dealTimeline.list(t => t.deal_id === dealId);
     for (const item of timeline) {
       await db.dealTimeline.delete(item.id);
     }
 
-    // Delete the deal
     await db.deals.delete(dealId);
 
     revalidatePath('/pipeline');

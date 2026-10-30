@@ -75,7 +75,6 @@ export default function TasksClient({ initialTasks, contacts }: TasksClientProps
     }
   };
 
-  // Create Task
   const handleCreateTaskSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError(null);

@@ -61,7 +61,6 @@ export default function DealDetailClient({
   const [aiNextStep, setAiNextStep] = useState<string | null>(null);
   const [isAiNextStepLoading, setIsAiNextStepLoading] = useState(false);
 
-  // Handle Edit Submit
   const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setEditError(null);
@@ -115,7 +114,6 @@ export default function DealDetailClient({
     }
   };
 
-  // Delete Deal
   const handleDelete = async () => {
     if (confirm('Are you sure you want to permanently delete this deal and its timeline history?')) {
       const res = await deleteDeal(deal.id);
